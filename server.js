@@ -376,6 +376,34 @@ item.id.toLowerCase() === query.toLowerCase())
     }
 })
         
+app.get("/lyrics", (req, res) => {
+	const query = req.query.query
+    const result = {}
+    res.header("Content-type", "application/json; charset=utf-8")
+ 
+    try {
+        const data = JSON.parse(fs.readFileSync("./lyrics/db.json"))
+        const music = data.find(item =>
+item.song.toLowerCase() === query.toLowerCase())
+        if (music) {
+            result.code = 200      
+            result.song = music.song
+            result.lyrics = music.lyrics
+            res.send(JSON.stringify(result, null, 2))
+            console.log(result)
+        } else {
+            result.code = 404
+            result.message = "Lyrics not found"
+            res.send(JSON.stringify(result, null, 2))
+        }
+    } catch (err) {
+        console.log(err)
+        result.code = 500
+        result.message = "Internal server error"
+        res.send(JSON.stringify(result, null, 2))
+    }
+})
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
   
