@@ -389,6 +389,7 @@ item.song.toLowerCase() === query.toLowerCase())
             result.code = 200      
             result.song = music.song
             result.lyrics = music.lyrics
+		result.img = music.img
             res.send(JSON.stringify(result, null, 2))
             console.log(result)
         } else {
