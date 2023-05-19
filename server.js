@@ -261,16 +261,12 @@ app.get("/car", (req, res) => {
 })
 
 app.get("/hentai", (req, res) => {
-    const key = req.query.apikey
+ 
     const result = {}
 
     res.header("Content-type", "application/json; charset=utf-8")
 
-    if (!apikey.includes(key)) {
-        result.code = 403
-        result.message = "Invalid API key, please contact admin to get key"
-        return res.send(JSON.stringify(result, null, 2))
-    }
+
 
     try {
         const data = JSON.parse(fs.readFileSync("./hentai/db.json"))
