@@ -4,7 +4,7 @@ import request from "request";
 import fs from "fs";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import { MessageEmbed } from 'discord.js';
+
 import path from "path";
 import { fileURLToPath } from "url";
 
