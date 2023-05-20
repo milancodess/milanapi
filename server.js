@@ -461,6 +461,41 @@ item.name.toLowerCase() === query.toLowerCase())
     }
 })
 
+  app.get("/iso", (req, res) => {
+	const query = req.query.query
+    const result = {}
+    res.header("Content-type", "application/json; charset=utf-8")
+    try {
+        const data = JSON.parse(fs.readFileSync("./iso/db.json"))
+        const country = data.find(item =>
+item.name.toLowerCase() === query.toLowerCase())
+        if (country) {
+            result.code = 200      
+            result.name = country.name
+            result.alpha-2 = country.alpha-2
+            result.alpha-3 = country.alpha-3
+            result.country-code = country.country-code
+            result.iso_3166-2 = country.iso_3166-2
+            result.region-code = country.region-code
+            result.sub-region-code = country.sub-region-code
+            res.send(JSON.stringify(result, null, 2))
+            console.log(result)
+        } else {
+            result.code = 404
+            result.message = "Country not found"
+            res.send(JSON.stringify(result, null, 2))
+        }
+    } catch (err) {
+        console.log(err)
+        result.code = 500
+        result.message = "Internal server error"
+        res.send(JSON.stringify(result, null, 2))
+    }
+})
+
+
+
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
   
