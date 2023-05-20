@@ -472,12 +472,12 @@ item.name.toLowerCase() === query.toLowerCase())
         if (country) {
             result.code = 200      
             result.name = country.name
-            result.alpha-2 = country.alpha-2
-            result.alpha-3 = country.alpha-3
-            result.country-code = country.country-code
-            result.iso_3166-2 = country.iso_3166-2
-            result.region-code = country.region-code
-            result.sub-region-code = country.sub-region-code
+            result.alpha2 = country.alpha2
+            result.alpha3 = country.alpha3
+            result.countrycode = country.countrycode
+            result.iso31662 = country.iso31662
+            result.regioncode = country.regioncode
+            result.subregioncode = country.subregioncode
             res.send(JSON.stringify(result, null, 2))
             console.log(result)
         } else {
