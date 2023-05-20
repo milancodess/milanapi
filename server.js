@@ -402,6 +402,65 @@ item.song.toLowerCase() === query.toLowerCase())
     }
 })
 
+app.get("/superhero", (req, res) => {
+	const query = req.query.query
+    const result = {}
+    res.header("Content-type", "application/json; charset=utf-8")
+    try {
+        const data = JSON.parse(fs.readFileSync("./pubg/db.json"))
+        const character = data.find(item =>
+item.name.toLowerCase() === query.toLowerCase())
+        if (character) {
+            result.code = 200      
+            result.id = character.id
+            result.name = character.name
+            result.slug = character.slug
+            result.powerstats = character.powerstats
+            result.intelligence = character.intelligence
+            result.strength = character.strength
+            result.speed = character.speed
+            result.combat = character.combat
+            result.durability = character.durability
+            result.power = character.power
+            result.appearance = character.appearance
+            result.gender = character.gender
+            result.race = character.race
+            result.height = character.height
+            result.weight = character.weight
+            result.eyeColor = character.eyeColor
+            result.hairColor = character.hairColor
+            result.biography = character.biography
+            result.fullName = character.fullName
+            result.alterEgos = character.alterEgos
+            result.aliases = character.placeOfBirth
+            result.firstAppearance = character.firstAppearance
+            result.publisher = character.publisher
+            result.alignment = character.alignment
+            result.work = character.work
+            result.occupation = character.occupation
+            result.connections = character.connections
+            result.groupAffiliation = character.groupAffiliation
+            result.relatives = character.relatives
+            result.images = character.images
+            result.xs = character.xs
+            result.sm = character.sm
+            result.md = character.md
+            result.lg = character.lg
+            res.send(JSON.stringify(result, null, 2))
+            console.log(result)
+        } else {
+            result.code = 404
+            result.message = "Character not found"
+            res.send(JSON.stringify(result, null, 2))
+        }
+    } catch (err) {
+        console.log(err)
+        result.code = 500
+        result.message = "Internal server error"
+        res.send(JSON.stringify(result, null, 2))
+    }
+})
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
   
