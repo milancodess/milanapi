@@ -407,7 +407,7 @@ app.get("/superhero", (req, res) => {
     const result = {}
     res.header("Content-type", "application/json; charset=utf-8")
     try {
-        const data = JSON.parse(fs.readFileSync("./pubg/db.json"))
+        const data = JSON.parse(fs.readFileSync("./superhero/db.json"))
         const character = data.find(item =>
 item.name.toLowerCase() === query.toLowerCase())
         if (character) {
