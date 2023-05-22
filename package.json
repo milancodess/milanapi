@@ -22,7 +22,7 @@
   "dependencies": {
     "@iamtraction/google-translate": "^1.1.2",
     "canvas": "^2.8.0",
-    "canvas-constructor": "^3.2.0",
+    "canvas-constructor": "^7.0.1",
     "cors": "^2.8.5",
     "discord.js": "^14.11.0",
     "express": "^4.17.1",
