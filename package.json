@@ -30,7 +30,7 @@
     "google-play-scraper": "^9.1.1",
     "got": "^12.6.0",
     "instagram-downloader": "^0.0.0",
-    "jimp": "^0.16.13",
+    "jimp": "^0.22.8",
     "node-fetch": "^3.3.1",
     "path": "^0.12.7",
     "pet-pet-gif": "^1.0.8",
