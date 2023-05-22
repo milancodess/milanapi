@@ -2,7 +2,7 @@ import express from "express";
 import fetch from "node-fetch"
 import request from "request";
 import fs from "fs";
-import puppeteer from "puppeteer";
+
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 
@@ -494,27 +494,8 @@ item.name.toLowerCase() === query.toLowerCase())
     }
 })
 
-app.get('/screenshot', async (req, res) => {
-  const { url } = req.query;
 
-  if (!url) {
-    return res.status(400).json({ error: 'URL parameter is required' });
-  }
 
-  try {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(url);
-    const screenshotBuffer = await page.screenshot();
-    await browser.close();
-
-    res.set('Content-Type', 'image/png');
-    res.send(screenshotBuffer);
-  } catch (error) {
-    console.error('Error capturing screenshot:', error);
-    res.status(500).json({ error: 'Failed to capture screenshot' });
-  }
-})
 
 
 app.listen(port, "0.0.0.0", function () {
