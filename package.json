@@ -28,7 +28,7 @@
     "express": "^4.17.1",
     "express-rate-limit": "^6.8.0",
     "google-play-scraper": "^10.0.0",
-    "got": "^13.0.0",
+    "got": "^14.0.0",
     "instagram-downloader": "^0.0.0",
     "jimp": "^0.22.8",
     "node-fetch": "^3.3.1",
