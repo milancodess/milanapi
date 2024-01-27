@@ -1,7 +1,6 @@
 import express from "express";
 import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
-import JSONdb from 'simple-json-db';
 import multer from 'multer';
 import stream from 'stream';
 import FormData from 'form-data';
