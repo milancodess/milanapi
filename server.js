@@ -119,7 +119,7 @@ app.get("/quote", (req, res) => {
   const result = {};
   res.header("Content-type", "application/json; charset=utf-8");
   try {
-    const data = JSON.parse(fs.readFileSync("./quote/db.json"));
+    const data = JSON.parse(fs.readFileSync("./quotes.json"));
     let quotes;
     if (req.query.anime) {
       quotes = data.filter((quote) => stringSimilarity.compareTwoStrings(quote.anime.toLowerCase(), req.query.anime.toLowerCase()) >= 0.5);
