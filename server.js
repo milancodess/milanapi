@@ -868,6 +868,47 @@ app.get('/tinyurl', (req, res) => {
     });
 });
 
+app.get('/spotify', async (req, res) => {
+  try {
+    const { url } = req.query;
+
+    if (!url) {
+      return res.status(400).json({ message: "URL is required" });
+    }
+
+    const getOriginalUrl = async () => {
+      try {
+        const response = await fetch(url);
+        return response.url;
+      } catch (error) {
+        throw new Error("Please input a valid URL");
+      }
+    };
+
+    const originalUrl = await getOriginalUrl(url);
+    const trackId = originalUrl.split("track/")[1].split("?")[0];
+    const headers = {
+      Origin: "https://spotifydown.com",
+      Referer: "https://spotifydown.com/",
+    };
+
+    let apiUrl = "";
+    if (url.includes("spotify.link")) {
+      apiUrl = `https://api.spotifydown.com/metadata/track/${trackId}`;
+    } else if (url.includes("open.spotify.com")) {
+      apiUrl = `https://api.spotifydown.com/download/${trackId}`;
+    } else {
+      return res.status(400).json({ message: "Invalid Spotify URL" });
+    }
+
+    const response = await axios.get(apiUrl, { headers });
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
