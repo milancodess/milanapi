@@ -821,10 +821,8 @@ app.get('/imgur', async (req, res) => {
             fs.unlinkSync(path);
 
             res.json({
-                uploaded: {
                     status: 'success',
                     image: upload.data.link
-                }
             });
         });
     } catch (error) {
