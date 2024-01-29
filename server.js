@@ -943,6 +943,55 @@ app.get('/spotisearch', async (req, res) => {
   }
 });
 
+app.get('/ocr', async (req, res) => {
+  const imageUrl = req.query.imageUrl;
+
+  if (!imageUrl) {
+    return res.status(400).json({ error: 'Missing imageUrl parameter' });
+  }
+
+  const visionApiUrl = `https://vision.googleapis.com/v1/images:annotate?key=AIzaSyAV-SXt0qiF5aHdn-Zgcl4Gr61_gxx28qs`;
+
+  const requestBody = {
+    requests: [{
+      image: {
+        source: {
+          imageUri: imageUrl
+        }
+      },
+      features: [{
+        type: "DOCUMENT_TEXT_DETECTION"
+      }]
+    }]
+  };
+
+  try {
+    const visionApiResponse = await fetch(visionApiUrl, {
+      method: 'POST',
+      headers: {
+        'Accept': '*/*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Content-Type': 'application/json',
+        'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120"',
+        'Sec-Ch-Ua-Mobile': '?1',
+        'Sec-Ch-Ua-Platform': '"Android"',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'cross-site',
+        'X-Client-Data': 'CIP9ygE=',
+        'Referer': 'https://brandfolder.com/',
+        'Referrer-Policy': 'strict-origin-when-cross-origin'
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    const visionApiResult = await visionApiResponse.json();
+    res.json(visionApiResult);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
