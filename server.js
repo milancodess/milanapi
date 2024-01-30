@@ -1021,6 +1021,32 @@ app.get('/rashifal', (req, res) => {
         });
 });
 
+const url = 'https://kathmandupost.com';
+app.get('/tkp', async (req, res) => {
+  try {
+    const response = await axios.get(url);
+    const html = response.data;
+    const $ = cheerio.load(html);
+    const paragraphs = $('p').map((index, element) => $(element).text().trim()).get();
+    const links = $('div.image.pull-right a').map((index, element) => $(element).attr('href')).get();
+
+    const imageLinks = $('div.image.pull-right figure a img.lazy.img-responsive').map((index, element) => $(element).attr('data-src')).get();
+    const result = [];
+    for (let i = 0; i < paragraphs.length; i++) {
+      result.push({
+        paragraph: paragraphs[i],
+        link: links[i] ? url + links[i] : null,
+        image: imageLinks[i] || null,
+      });
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
