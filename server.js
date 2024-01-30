@@ -1034,7 +1034,7 @@ app.get('/tkp', async (req, res) => {
     const result = [];
     for (let i = 0; i < paragraphs.length; i++) {
       result.push({
-        paragraph: paragraphs[i],
+        news: paragraphs[i],
         link: links[i] ? url + links[i] : null,
         image: imageLinks[i] || null,
       });
