@@ -990,6 +990,37 @@ app.get('/ocr', async (req, res) => {
   }
 });
 
+app.get('/rashifal', (req, res) => {
+    const url = 'https://www.hamropatro.com/rashifal';
+
+    axios.get(url)
+        .then(response => {
+            const $ = cheerio.load(response.data);
+
+            const h3Elements = $('h3');
+            const descElements = $('.desc p');
+
+            const rashiNames = [
+                "मेष", "बृष", "मिथुन", "कर्कट",
+                "सिंह", "कन्या", "तुला", "बृश्चिक",
+                "धनु", "मकर", "कुम्भ", "मीन"
+            ];
+
+            const results = [];
+       descElements.each((index, element) => {
+                const rashi = index + 1; 
+                const name = rashiNames[index];
+                const text = $(element).text();
+                results.push({ rashi, name, text });
+            });
+
+            res.json(results);
+        })
+        .catch(error => {
+            res.status(500).json({ error: `Failed to retrieve the page. Error: ${error.message}` });
+        });
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
