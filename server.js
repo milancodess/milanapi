@@ -1047,6 +1047,43 @@ app.get('/tkp', async (req, res) => {
   }
 });
 
+app.get('/news', async (req, res) => {
+  try {
+    const newsUrl = req.query.newsUrl;
+
+    if (!newsUrl) {
+      return res.status(400).json({ error: 'Missing newsUrl parameter' });
+    }
+
+    const response = await axios.get(newsUrl);
+    const html = response.data;
+
+    const $ = cheerio.load(html);
+
+    const author = $('h5.text-capitalize a').text().trim();
+
+    const updatedTimes = [];
+    $('div.updated-time').each((index, element) => {
+      
+      const published = $(element).contents().filter(function() {
+        return this.nodeType === 3; 
+      }).text().trim();
+      updatedTimes.push({ published });
+    });
+
+    const news = $('section.story-section p').text().trim();
+
+    res.json({
+      author: author,
+      updatedTimes: updatedTimes,
+      news: news
+    });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
