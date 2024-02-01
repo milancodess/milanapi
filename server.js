@@ -1368,7 +1368,7 @@ async function generateImages(prompt, model) {
   "shoninsBeautiful_v10.safetensors [25d8c546]",
   "theallys-mix-ii-churned.safetensors [5d9225a4]",
   "timeless-1.0.ckpt [7c4971d4]",
-  "toonyou_beta6.safetensors [980f6b15]"
+  "toonyou_beta6.safetensors [980f6b15]",
   "dreamshaperXL10_alpha2.safetensors [c8afe2ef]",
   "dynavisionXL_0411.safetensors [c39cc051]",
   "juggernautXL_v45.safetensors [e75f5471]",
