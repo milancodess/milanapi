@@ -798,29 +798,40 @@ app.get('/download', async (req, res) => {
 });
 
 app.get('/imgur', async (req, res) => {
-    const link = req.query.link;
+  try {
+    const { imageUrl } = req.query;
 
-    if (!link) return res.json({ error: 'Missing link.' });
-
-    try {
-        const response = await axios.post('https://api.imgur.com/3/image', {
-            image: encodeURI(link)
-        }, {
-            headers: {
-                'Authorization': 'Client-ID 6d0dba3a66763d9'
-            }
-        });
-
-        const upload = response.data;
-        res.json({
-            uploaded: {
-                status: 'success',
-                image: upload.data.link
-            }
-        });
-    } catch (error) {
-        res.json({ error: 'Something went wrong with your link' });
+    if (!imageUrl) {
+      return res.status(400).json({ error: 'imageUrl is required' });
     }
+
+    const formData = new FormData();
+    formData.append('new_album_id', '0');
+    formData.append('resize', '-1');
+    formData.append('url', imageUrl);
+
+    const response = await axios.post('https://imgur.com/upload', formData, {
+      headers: {
+        ...formData.getHeaders(),
+        'accept': '*/*',
+        'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+        'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120"',
+        'sec-ch-ua-mobile': '?1',
+        'sec-ch-ua-platform': '"Android"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-site',
+        'cookie': 'postpagebeta=1; frontpagebetav2=1; _ga=GA1.2.132131849.1706566157; _gid=GA1.2.1526217734.1706566157; ana_client_session_id=dcebb783-5b0c-4f88-b2f7-c7e2a3ba4c50; _gat=1; m_section=hot; m_sort=time; amp_f1fc2a=Ex8WS_wf1Mvsexf7knCfL1...1hlbka23u.1hlbka35f.1.3.4; is_emerald=0; _lr_env=noEnvelope; retina=1; IMGURUIDJAFO=3bd1abf61d0d5356f807c88fb00effbfabf5750e81e9310c9f38a6e5328bb368; authautologin=b31aa684f00d3ac5e1b65c0f0886467f%7EfOB2ozZIbUv1Zbvd2O5KiATr9t6FrmDS; IMGURSESSION=7895dcc0ea4d84efd8d509c856db2d3f; accesstoken=a1e55097a2c06d3e3cc25d69adeb0284eac47b75; is_authed=1; is_just_signed_up=1; _nc=1; postpagebetalogged=1; amplitude_id_f1fc2abcb6d136bd4ef338e7fc0b9d05imgur.com=eyJkZXZpY2VJZCI6Ijk0Y2Y2Nzg4LWM1ODAtNGE3Yi1iMjg4LWNjOTRiOGU0MDE3YVIiLCJ1c2VySWQiOiIxNzgyOTIwOTYiLCJvcHRPdXQiOmZhbHNlLCJzZXNzaW9uSWQiOjE3MDY1NjYxNjYzOTMsImxhc3RFdmVudFRpbWUiOjE3MDY1NjYxOTQ5NDEsImV2ZW50SWQiOjMsImlkZW50aWZ5SWQiOjUsInNlcXVlbmNlTnVtYmVyIjo4fQ==; SESSIONDATA=%7B%22sessionCount%22%3A1%2C%22sessionTime%22%3A1706566194966%7D',
+        'Referer': 'https://kuttarbaccha56.imgur.com/',
+        'Referrer-Policy': 'strict-origin-when-cross-origin'
+      }
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 app.get('/tinyurl', (req, res) => {
