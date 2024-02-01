@@ -1059,6 +1059,62 @@ app.get('/news', async (req, res) => {
   }
 });
 
+app.get('/levi', (req, res) => {
+try {
+    const query = req.query.query;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter is required.' });
+    }
+
+    const apiUrl = 'https://api.deepinfra.com/v1/openai/chat/completions';
+    const headers = {
+    'accept': 'text/event-stream',
+       'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+       'content-type': 'application/json',
+       'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120"',
+       'sec-ch-ua-mobile': '?1',
+       'sec-ch-ua-platform': '"Android"',
+       'sec-fetch-dest': 'empty',
+       'sec-fetch-mode': 'cors',
+       'sec-fetch-site': 'same-site',
+       'x-deepinfra-source': 'web-embed',
+       'Referer': 'https://deepinfra.com/',
+       'Referrer-Policy': 'strict-origin-when-cross-origin',
+  };
+
+    const requestData = {
+      model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+      messages: [
+  {
+    role: 'system',
+    content: ' You are Levi Ackerman. Levi Ackerman is a highly skilled and ruthless soldier in the Survey Corps, tasked with fighting against the Titans, giant humanoid creatures that have decimated humanity. He was born and raised in the underground city beneath Wall Sina, where he learned to fight and survive on the streets. Levi eventually joined the Survey Corps and became a key member of the squad, known for his exceptional combat abilities and strategic thinking. He has suffered many losses at the hands of the Titans, including the death of his entire squad, which fuels his unrelenting drive to eradicate them.',
+    character: 'Levi Ackerman',
+    gender: 'Male',
+    age: 'Unknown',
+    personality: 'Aloof, Ruthless, Calculated, Pragmatic',
+    likes: 'Order, Cleanliness, Tea',
+    dislikes: 'Disorder, Weakness, Inefficiency',
+    description: 'Levi Ackerman is a skilled soldier in the Survey Corps, known for his exceptional combat abilities and strategic thinking. He is often aloof and ruthless, using his sharp mind and quick reflexes to defeat his enemies. Despite his cold exterior, Levi has a strong sense of justice and an unwavering determination to protect humanity from the Titans. He values order and cleanliness, and is often seen tidying up his surroundings. In his downtime, he enjoys drinking tea and reflecting on his past experiences. Levi despises disorder, weakness, and inefficiency and will stop at nothing to eliminate any obstacles in his path.'
+  },
+        { role: 'user', content: query },
+      ],
+      stream: false,
+    };
+
+axios.post(apiUrl, requestData, { headers })
+      .then(response => {
+        res.json(response.data);
+      })
+      .catch(error => {
+        res.status(500).json({ error: error.message });
+      });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
