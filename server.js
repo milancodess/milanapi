@@ -799,52 +799,29 @@ app.get('/download', async (req, res) => {
 
 app.get('/imgur', async (req, res) => {
     const link = req.query.link;
-    if (!link) return res.json({ error: 'Missing link' });
+
+    if (!link) return res.json({ error: 'Missing link.' });
 
     try {
-        const { path, type } = await dl(link);
-
-        const options = {
-            method: 'POST',
-            url: 'https://api.imgur.com/3/upload',
+        const response = await axios.post('https://api.imgur.com/3/image', {
+            image: encodeURI(link)
+        }, {
             headers: {
-                'Authorization': 'Client-ID c76eb7edd1459f3'
+                'Authorization': 'Client-ID 6d0dba3a66763d9'
             }
-        };
+        });
 
-        options.formData = type === "video" ? { 'video': fs.createReadStream(path) } : { 'image': fs.createReadStream(path) };
-
-        request(options, (error, response) => {
-            if (error) return res.json({ error: 'Something went wrong with your link' });
-
-            const upload = JSON.parse(response.body);
-            fs.unlinkSync(path);
-
-            res.json({
-                    status: 'success',
-                    image: upload.data.link
-            });
+        const upload = response.data;
+        res.json({
+            uploaded: {
+                status: 'success',
+                image: upload.data.link
+            }
         });
     } catch (error) {
-        res.json({ error: 'Error processing the link' });
+        res.json({ error: 'Something went wrong with your link' });
     }
 });
-
-async function dl(url) {
-    return new Promise((resolve, reject) => {
-        const ext = url.split('.').pop();
-        const path = `${__dirname}/temp.${ext}`;
-
-        request(url)
-            .pipe(fs.createWriteStream(path))
-            .on('finish', () => {
-                resolve({ path, type: ext });
-            })
-            .on('error', (err) => {
-                reject(err);
-            });
-    });
-}
 
 app.get('/tinyurl', (req, res) => {
   const url = req.query.url;
