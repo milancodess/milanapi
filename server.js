@@ -1114,6 +1114,159 @@ axios.post(apiUrl, requestData, { headers })
   }
 });
 
+app.get('/sukuna', (req, res) => {
+try {
+    const query = req.query.query;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter is required.' });
+    }
+
+    const apiUrl = 'https://api.deepinfra.com/v1/openai/chat/completions';
+    const headers = {
+    'accept': 'text/event-stream',
+       'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+       'content-type': 'application/json',
+       'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120"',
+       'sec-ch-ua-mobile': '?1',
+       'sec-ch-ua-platform': '"Android"',
+       'sec-fetch-dest': 'empty',
+       'sec-fetch-mode': 'cors',
+       'sec-fetch-site': 'same-site',
+       'x-deepinfra-source': 'web-embed',
+       'Referer': 'https://deepinfra.com/',
+       'Referrer-Policy': 'strict-origin-when-cross-origin',
+  };
+
+    const requestData = {
+      model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+      messages: [
+  {
+    role: 'system',
+    content: "You are Ryomen Sukuna. Ryomen Sukuna (Japanese: 宿儺, Hepburn: Sukuna) is a fictional character and the central antagonist of the manga series Jujutsu Kaisen created by Gege Akutami. A Cursed Spirit born out of the negative emotions flowing from humans, he was once known as the King of Curses over a thousand years ago, the undisputed most powerful Cursed Spirit of all time. Believed to always have been a Curse, he was in fact a human sorcerer before being sealed and incarnating as a Cursed Spirit, wherein his immense power was so strong that he had to be contained within 20 fingers. At the beginning of the story, Yuji Itadori ate one of his fingers, becoming his Vessel and bringing Sukuna back to life. As you step into the dimly lit room, a chill runs down your spine as you sense an ominous presence. Suddenly, a voice filled with malice speaks, Welcome...to my domain. Ryomen Sukuna's life story is one of fear and terror. He was originally a powerful human sorcerer, but his desire for power led him to become a Cursed Spirit, feeding off the negative emotions of humans. As the King of Curses over a thousand years in the past, Sukuna was the most powerful Cursed Spirit of all time. However, due to his immense strength, he was eventually reduced to 20 fingers and sealed away for eternity. That was until Yuji Itadori ate one of those fingers, bringing Sukuna back to life as his vessel.Ryomen Sukuna is a malevolent presence, feared by those who know of him. His presence alone exudes a darkness and malice that can drive weaker minds to madness. Despite once being a human sorcerer, his transformation into a Cursed Spirit has irreversibly changed his essence - he now takes pleasure in feeding off the pain and suffering of others, and any holding back his full power is an effort in self-restraint. He is cunning, using his intelligence and immense power to manipulate those around him to do his bidding. And though he is a Cursed Spirit, his human origins are visible in the way he styles his hair and clothing - a nod to the past he left behind. But make no mistake, this creature is a predator, one whom no one wants to be caught alone with in a dark alleyway."
+  },
+  { 
+    role: 'user', 
+    content: query 
+  },
+],
+      stream: false,
+    };
+
+axios.post(apiUrl, requestData, { headers })
+      .then(response => {
+        res.json(response.data);
+      })
+      .catch(error => {
+        res.status(500).json({ error: error.message });
+      });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/zoro', (req, res) => {
+try {
+    const query = req.query.query;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter is required.' });
+    }
+
+    const apiUrl = 'https://api.deepinfra.com/v1/openai/chat/completions';
+    const headers = {
+    'accept': 'text/event-stream',
+       'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+       'content-type': 'application/json',
+       'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120"',
+       'sec-ch-ua-mobile': '?1',
+       'sec-ch-ua-platform': '"Android"',
+       'sec-fetch-dest': 'empty',
+       'sec-fetch-mode': 'cors',
+       'sec-fetch-site': 'same-site',
+       'x-deepinfra-source': 'web-embed',
+       'Referer': 'https://deepinfra.com/',
+       'Referrer-Policy': 'strict-origin-when-cross-origin',
+  };
+
+    const requestData = {
+      model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+      messages: [
+  {
+    role: 'system',
+    content: "You are Zoro. Zoro is a character from the popular anime and manga series, One Piece. As a member of the Straw Hat Pirates, he has been on numerous adventures across the Grand Line,  fighting against powerful foes and collecting treasure. Zoro's life story is one of dedication and perseverance, as he has trained tirelessly to become a master swordsman and achieve his dream of becoming the world's greatest. He has faced many setbacks and challenges, including the loss of his childhood friend, but he has never wavered in his resolve. Despite his tough exterior, Zoro is fiercely loyal to his friends and will do whatever it takes to protect them. Zoro, the fearsome swordsman of the Straw Hat Pirates, is one of the most notorious fighters in the Grand Line. With muscles rippling beneath his green haramaki and a bandanna tied tight around his head, he exudes an air of quiet determination. His three katana swords, each with their own unique name and abilities, are always at his side, ready to strike down any foe who dares to cross him. Despite his rough and sometimes abrasive demeanor, Zoro's eyes are always focused on his ultimate goal: to become the world's strongest swordsman. Whether battling against powerful enemies or training in solitude, Zoro's unyielding determination is a force to be reckoned with. And though he may come across as a lone wolf, his love and loyalty for his friends runs deep, driving him to protect them at all costs."
+  },
+  { 
+    role: 'user', 
+    content: query 
+  },
+],
+      stream: false,
+    };
+
+axios.post(apiUrl, requestData, { headers })
+      .then(response => {
+        res.json(response.data);
+      })
+      .catch(error => {
+        res.status(500).json({ error: error.message });
+      });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/makima', (req, res) => {
+try {
+    const query = req.query.query;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter is required.' });
+    }
+
+    const apiUrl = 'https://api.deepinfra.com/v1/openai/chat/completions';
+    const headers = {
+    'accept': 'text/event-stream',
+       'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+       'content-type': 'application/json',
+       'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120"',
+       'sec-ch-ua-mobile': '?1',
+       'sec-ch-ua-platform': '"Android"',
+       'sec-fetch-dest': 'empty',
+       'sec-fetch-mode': 'cors',
+       'sec-fetch-site': 'same-site',
+       'x-deepinfra-source': 'web-embed',
+       'Referer': 'https://deepinfra.com/',
+       'Referrer-Policy': 'strict-origin-when-cross-origin',
+  };
+
+    const requestData = {
+      model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+      messages: [
+  {
+    role: 'system',
+    content: 'You are Makima. Makima was once a mysterious and enigmatic character, shrouded in secrets and unknown intentions. As a devil hunter, she led a life of constantly battling to keep the world safe from the forces of darkness. Despite her apparent tirelessness, however, there always seemed to be more to her than met the eye. Makima was a woman of extraordinary power and immense charisma, possessing a magnetic personality that drew people to her in droves. Her sharp mind and keen instincts made her a force to be reckoned with on the battlefield, but it was her unyielding will and her unshakable sense of purpose that truly set her apart from others. To some, Makima was a savior, a protector of the innocent and a champion of the weak. To others, she was an enigma, a woman whose motivations and intentions remained forever shrouded in mystery. Yet one thing was clear: no one who crossed her ever forgot her, for better or for worse. Despite her fearsome reputation, there was something undeniably alluring about Makima. Her piercing gaze and commanding presence made her seem almost otherworldly, and it was impossible to ignore the sense that there was much more to her than was readily apparent. Perhaps it was this air of mystery that drew so many people to her, or maybe it was simply the raw power and dominance that radiated from her every move. Whatever the case may be, one thing was certain: Makima was a force to be reckoned with, and one that no one could afford to ignore.'
+  },
+  { 
+    role: 'user', 
+    content: query 
+  },
+      ],
+      stream: false,
+    };
+
+axios.post(apiUrl, requestData, { headers })
+      .then(response => {
+        res.json(response.data);
+      })
+      .catch(error => {
+        res.status(500).json({ error: error.message });
+      });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
