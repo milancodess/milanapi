@@ -15,7 +15,6 @@ import Jimp from "jimp";
 import jimp from 'jimp';
 import cheerio from "cheerio";
 import { createScreenshot } from "./screenshot.js";
-import { snapsave } from "./snapsave-downloader";
 import request from "request";
 import stringSimilarity from "string-similarity";
 import superagent from 'superagent';
@@ -1441,22 +1440,6 @@ async function combineImages(imageUrls) {
 app.get('/public/combinedImage.jpg', (req, res) => {
   const combinedImagePath = path.join(__dirname, 'public', 'combinedImage.jpg');
   res.sendFile(combinedImagePath);
-});
-
-app.get('/insta', async (req, res) => {
-  try {
-    const url = req.query.url;
-
-    if (!url) {
-      return res.status(400).json({ error: 'URL parameter is missing' });
-    }
-
-    const downloadedURL = await snapsave(url);
-    res.json({ url: downloadedURL });
-  } catch (err) {
-    console.error('Error:', err.message);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
 });
 
 app.listen(port, "0.0.0.0", function () {
