@@ -1284,13 +1284,13 @@ app.get('/imagine', async (req, res) => {
       name: "MilanXD",
       contact: "https://www.facebook.com/milanxd.bh"
     };
-    
+
     const modifiedImageUrls = imageUrls.reduce((acc, curr, index) => {
       acc[`image${index + 1}`] = curr;
       return acc;
     }, {});
 
-    return res.json({ combinedImageUrl: "https://milanbhandari.onrender.com/milanxd/combinedImage.jpg", imageUrls: modifiedImageUrls, author });
+    return res.json({ combinedImageUrl: "https://milanbhandari.onrender.com/public/combinedImage.jpg", imageUrls: modifiedImageUrls, author });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'An error occurred while generating the image.' });
@@ -1358,7 +1358,7 @@ async function generateImages(prompt, model) {
   "timeless-1.0.ckpt [7c4971d4]",
   "toonyou_beta6.safetensors [980f6b15]",
   "dreamshaperXL10_alpha2.safetensors [c8afe2ef]",
-  "dynavisionXL_0411.safetensors [c39cc051]",
+  "dynavisionXL_0411.safetensors [c39cc051]",  
   "juggernautXL_v45.safetensors [e75f5471]",
   "realismEngineSDXL_v10.safetensors [af771c3f]",
   "sd_xl_base_1.0.safetensors [be9edd61]",
@@ -1394,7 +1394,7 @@ async function generateImages(prompt, model) {
   return Promise.all(imagePromises);
 }
 
- async function combineImages(imageUrls) {
+async function combineImages(imageUrls) {
   const images = await Promise.all(imageUrls.map(url => Jimp.read(url)));
 
   const imageWidth = images[0].bitmap.width;
@@ -1423,7 +1423,8 @@ async function generateImages(prompt, model) {
   await combinedImage.writeAsync(combinedImgPath);
 
   return combinedImgPath;
-              } 
+}
+
 
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
