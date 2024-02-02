@@ -1276,18 +1276,6 @@ app.get('/imagine', async (req, res) => {
   if (!prompt) {
     return res.status(400).json({ error: 'Please provide a prompt.' });
   }
-  const nsfwPath = path.join('nsfw.json');
-const nsfwWords = JSON.parse(fs.readFileSync(nsfwPath, 'utf8'));
-  const forbiddenWords = nsfwWords;
-  const antiNSFW = 'https://i.ibb.co/hyNnCtm/20230712-023348.jpg';
-  for (const word of forbiddenWords) {
-    if (prompt.includes(word)) {
-      return res.json({
-        combinedImageUrl: antiNSFW,
-        imageUrls: { image1: antiNSFW, image2: antiNSFW, image3: antiNSFW, image4: antiNSFW }
-      });
-    }
-  }
 
   try {
     const imageUrls = await generateImages(prompt.toString(), model);
