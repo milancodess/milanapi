@@ -15,7 +15,7 @@ import Jimp from "jimp";
 import jimp from 'jimp';
 import cheerio from "cheerio";
 import { createScreenshot } from "./screenshot.js";
-import snapsave from "./snapsave-downloader";
+import { snapsave } from "./snapsave-downloader";
 import request from "request";
 import stringSimilarity from "string-similarity";
 import superagent from 'superagent';
