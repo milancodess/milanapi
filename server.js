@@ -1269,6 +1269,11 @@ axios.post(apiUrl, requestData, { headers })
   }
 });
 
+const publicDirectory = path.join(__dirname, 'public');
+if (!fs.existsSync(publicDirectory)) {
+  fs.mkdirSync(publicDirectory);
+}
+
 app.get('/imagine', async (req, res) => {
   const prompt = req.query.prompt;
   const model = req.query.model;
@@ -1284,18 +1289,20 @@ app.get('/imagine', async (req, res) => {
       name: "MilanXD",
       contact: "https://www.facebook.com/milanxd.bh"
     };
-
+    
     const modifiedImageUrls = imageUrls.reduce((acc, curr, index) => {
       acc[`image${index + 1}`] = curr;
       return acc;
     }, {});
 
-    return res.json({ combinedImageUrl: "https://milanbhandari.onrender.com/public/combinedImage.jpg", imageUrls: modifiedImageUrls, author });
+    return res.json({ combinedImageUrl: combinedImagePath, imageUrls: modifiedImageUrls, author });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'An error occurred while generating the image.' });
   }
 });
+
+
 
 async function generateImages(prompt, model) {
   const models = [
@@ -1375,7 +1382,7 @@ async function generateImages(prompt, model) {
   const imagePromises = [];
 
   for (let i = 0; i < 4; i++) {
-    let job = await prodia.createJob({
+    let job = await prodia.generateImage({
       model: selectedModel,
       prompt: prompt,
       seed: -1,
@@ -1419,12 +1426,21 @@ async function combineImages(imageUrls) {
   combinedImage.composite(images[2], image3X, image3Y);
   combinedImage.composite(images[3], image4X, image4Y);
 
-  const combinedImgPath = './public/combinedImage.jpg'; // Path to save the combined image
+  const uniqueFilename = `combinedImage.jpg`;
+  const combinedImgPath = path.join(__dirname, 'public', uniqueFilename);
+
   await combinedImage.writeAsync(combinedImgPath);
 
-  return combinedImgPath;
+  // Construct external URL based on your provided format
+  const externalUrl = `https://milanbhandari.onrender.com/public/combinedImage.jpg`;
+
+  return externalUrl;
 }
 
+app.get('/public/combinedImage.jpg', (req, res) => {
+  const combinedImagePath = path.join(__dirname, 'public', 'combinedImage.jpg');
+  res.sendFile(combinedImagePath);
+});
 
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
