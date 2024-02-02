@@ -1302,7 +1302,7 @@ const nsfwWords = JSON.parse(fs.readFileSync(nsfwPath, 'utf8'));
       return acc;
     }, {});
 
-    return res.json({ combinedImageUrl: "https://milanbhandari.imageapi.repl.co/milanxd/combinedImage.jpg", imageUrls: modifiedImageUrls, author });
+    return res.json({ combinedImageUrl: "https://milanbhandari.onrender.com/milanxd/combinedImage.jpg", imageUrls: modifiedImageUrls, author });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'An error occurred while generating the image.' });
