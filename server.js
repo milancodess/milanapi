@@ -1497,6 +1497,48 @@ app.post("/download", async (req, res) => {
     }
 });
 
+app.get('/clips', async (req, res) => {
+  const query = req.query.query;
+  if (!query) {
+    return res.status(400).send('Query parameter is required');
+  }
+  try {
+
+    const clipsApi = `https://clip.cafe/?s=${query}&ss=s`;
+    const response = await axios.get(clipsApi);
+    const html = response.data;
+
+    const $ = cheerio.load(html);
+
+    const results = [];
+
+    const clipPromises = $('.searchResultClip').map(async (index, element) => {
+      const time = $(element).find('.clipTitle .videoDuration').text();
+      const movie = $(element).find('.clipMovie a').text();
+      const linkk = $(element).find('.searchResultClipImg a').attr('href');
+      const link = `https://clip.cafe/${linkk}`;
+
+      try {
+        const response = await axios.get(link);
+        const html = response.data;
+        const $ = cheerio.load(html);
+        let video = $('source[type="video/mp4"]').attr('src');
+        const quote = $('h1.quote-title').text();
+
+        results.push({ movie, time, link, quote, video});
+      } catch (error) {
+        console.error('Error:', error.message);
+      }
+    }).get();
+
+    await Promise.all(clipPromises);
+
+    res.json({ results });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
