@@ -1540,6 +1540,59 @@ app.get('/clips', async (req, res) => {
   }
 });
 
+const CLIENT_ID = 'f3335b183f444e44a68ab7a6c886dbb1';
+const CLIENT_SECRET = '51306a1a768746459321ff76f88a0c39';
+
+app.get('/spotisearch', async (req, res) => {
+  const query = req.query.query;
+  if (!query) {
+    return res.status(400).send('Query parameter is required');
+  }
+  try {
+    function msToMinutesAndSeconds(duration_ms) {
+  const minutes = Math.floor(duration_ms / 60000);
+  const seconds = ((duration_ms % 60000) / 1000).toFixed(0);
+  return `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`;
+    }
+    const tokenResponse = await axios({
+      method: 'post',
+      url: 'https://accounts.spotify.com/api/token',
+      params: {
+        grant_type: 'client_credentials'
+      },
+      headers: {
+        'Authorization': 'Basic ' + Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'),
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+
+    const accessToken = tokenResponse.data.access_token;
+
+    const searchResponse = await axios.get('https://api.spotify.com/v1/search', {
+      headers: {
+        'Authorization': 'Bearer ' + accessToken
+      },
+      params: {
+        query: query,
+        type: 'track'
+      }
+    });
+
+const tracks = searchResponse.data.tracks.items.map(item => ({
+      name: item.name,
+      artist: item.artists.map(artist => artist.name).join(', '),
+      release_date: item.album.release_date,
+      duration: msToMinutesAndSeconds(item.duration_ms),
+      link: item.external_urls.spotify,
+      image_url: item.album.images.length > 0 ? item.album.images[0].url : null
+    }));
+
+    res.json(tracks);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
