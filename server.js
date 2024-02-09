@@ -884,39 +884,7 @@ app.get('/spotify', async (req, res) => {
   }
 });
 
-app.get('/spotisearch', async (req, res) => {
-  try {
-    const query = req.query.query;
 
-    if (!query) {
-      return res.status(400).json({ error: 'Query parameter is required.' });
-    }
-
-  const apiUrl = `https://api-partner.spotify.com/pathfinder/v1/query?operationName=findTracks&variables=%7B%22query%22%3A%22${query}%22%2C%22limit%22%3A20%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%22b149b7c5b174c84dc0c5f02b599279b5d37ecfe5e18289dae63abc19c8f26b76%22%7D%7D`;
-
-    const headers = {
-      "accept": "application/json",
-      "accept-language": "en-US,en;q=0.9",
-      "authorization": "Bearer BQCxsf_xwp05kj-mzmL4TBNXugijn3jEgpA9UAzCKMEl8ql8aOoHlX_GytcO6-crjzAkLjqEbjs-06qQiVQ1IkbLinLIn_jhbcNZgINJkwArr3P1-OI",
-      "client-token": "AAC+ve+4UhMELih3mSvc3q2pwDj2wP3dsi4zDU5AGHrU55ENt/Krx46OaXB1na9rglBDmsde6WIslFWZqwNSk5NeUGIA1sgWu/mb+mm5YzyMoZflZyWG4HCyZzv/fCOD13uS5zUkIwGinEfQnSDBavuvmXNq4Khq73/jvutgwlTml9AnzXsVmsWLqItnurrsjFdl7/k/IAve70St8rU73pmQuvk/rNtBAyttOhpeoAD3xmwfhC2YuUu2/tsbsJEugqO6ZipHfAhBcm9rY8SHENt/LY53YyXFJUn4S9rfWcpGi4Us8wy+GRrAQ3uHoTTxglWgr0U=",
-      "content-type": "application/json;charset=UTF-8",
-      "sec-ch-ua": "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\"",
-      "sec-ch-ua-mobile": "?1",
-      "sec-ch-ua-platform": "\"Android\"",
-      "sec-fetch-dest": "empty",
-      "sec-fetch-mode": "cors",
-      "sec-fetch-site": "same-site",
-      "Referer": "https://open.spotify.com/",
-      "Referrer-Policy": "strict-origin-when-cross-origin"
-    };
-
-    const response = await axios.get(apiUrl, { headers });
-    res.json(response.data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
 
 app.get('/ocr', async (req, res) => {
   const imageUrl = req.query.imageUrl;
