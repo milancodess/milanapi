@@ -1561,6 +1561,40 @@ const tracks = searchResponse.data.tracks.items.map(item => ({
   }
 });
 
+app.get('/9anime', async (req, res) => {
+    const query = req.query.query;
+    const url = `https://9animetv.to/search?keyword=${query}`;
+
+    try {
+        const response = await axios.get(url);
+        const html = response.data;
+        const $ = cheerio.load(html);
+
+        const results = [];
+
+        $('.film-poster').each((index, element) => {
+            const $element = $(element);
+            const textTick = $element.find('.tick-eps').text().trim();
+            const imageLink = $element.find('.film-poster-img').attr('data-src');
+            const altText = $element.find('.film-poster-img').attr('alt');
+            const hrefValue = $element.find('.film-poster-ahref').attr('href');
+            const aHref = hrefValue ? `https://9animetv.to${hrefValue}` : '';
+          results.push({
+                anime: altText,
+                episode: textTick,
+                image: imageLink,
+                link: aHref
+            });
+        });
+
+        res.json(results);
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).send("Failed to fetch data.");
+    }
+});
+
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
