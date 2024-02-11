@@ -1594,6 +1594,52 @@ app.get('/9anime', async (req, res) => {
     }
 });
 
+app.get('/fbuid', async (req, res) => {
+  let originalLink = req.query.link;
+
+  const linkWithoutQuery = originalLink.split('?')[0];
+  
+  let username;
+  if (linkWithoutQuery.includes('fb.me/') || linkWithoutQuery.includes('facebook.com/') || linkWithoutQuery.includes('m.me/')) {
+    username = linkWithoutQuery.split('/').pop();
+  } else {
+    const parts = linkWithoutQuery.split('/');
+    username = parts[parts.length - 1];
+  }
+
+  const link = `https://www.facebook.com/${username}`;
+
+  const url = 'https://fchat-app.salekit.com:4039/api/v1/facebook/get_uid';
+  const headers = {
+      "accept": "*/*",
+      "accept-language": "en-US,en;q=0.9",
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "sec-ch-ua": "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\"",
+      "sec-ch-ua-mobile": "?1",
+      "sec-ch-ua-platform": "\"Android\"",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "cross-site",
+      "Referer": "https://fbuid.net/",
+      "Referrer-Policy": "strict-origin-when-cross-origin"
+  };
+
+  const body = new URLSearchParams();
+  body.append('link', link);
+
+  try {
+      const response = await fetch(url, {
+          method: "POST",
+          headers: headers,
+          body: body
+      });
+      const data = await response.json();
+      res.json(data);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
