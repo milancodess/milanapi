@@ -1410,63 +1410,8 @@ app.get('/public/combinedImage.jpg', (req, res) => {
   res.sendFile(combinedImagePath);
 });
 
-async function getDetails(id) {
-    try {
-        const response = await axios.get(
-            `http://terabox-dl.qtcloud.workers.dev/api/get-info?shorturl=${id}&pwd=`
-        );
-        return response.data;
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-}
-
-async function getDownloadLink(data) {
-    try {
-        const config = {
-            headers: {
-                "Content-Type": "application/json"
-            }
-        };
-
-        const response = await axios.post(
-            "https://terabox-dl.qtcloud.workers.dev/api/get-download",
-            data,
-            config
-        );
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-}
-
-app.get("/details", async (req, res) => {
-    const link = req.query.link;
-    if (!link) {
-        return res.status(400).json({ error: "Link query parameter is required" });
-    }
-    const id = link.match(/https:\/\/teraboxapp\.com\/s\/([^/]+)/)[1];
-    try {
-        const details = await getDetails(id);
-        res.json(details);
-    } catch (error) {
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-app.post("/download", async (req, res) => {
-    const data = req.body;
-    try {
-        const downloadLink = await getDownloadLink(data);
-        res.json(downloadLink);
-    } catch (error) {
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
 app.get('/clips', async (req, res) => {
-  const query = req.query.query;
+	const query = req.query.query;
   if (!query) {
     return res.status(400).send('Query parameter is required');
   }
