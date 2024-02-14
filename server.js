@@ -1641,6 +1641,19 @@ app.get('/fbuid', async (req, res) => {
   }
 });
 
+app.get('/terabox', async (req, res) => {
+  try {
+    const link = req.query.url;
+    if (!link) {
+      return res.status(400).send('URL parameter is required');
+    }
+    const response = await axios.get(`https://afca-174-138-88-233.ngrok-free.app/get?url=${link}`);
+    res.send(response.data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
