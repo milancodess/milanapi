@@ -1592,7 +1592,7 @@ app.get('/terabox', async (req, res) => {
     if (!link) {
       return res.status(400).send('URL parameter is required');
     }
-    const response = await axios.get(`https://afca-174-138-88-233.ngrok-free.app/get?url=${link}`);
+    const response = await axios.get(`https://terabox-app.vercel.app/api?data=${link}`);
     res.send(response.data);
   } catch (error) {
     res.status(500).send(error.message);
