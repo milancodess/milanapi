@@ -1600,7 +1600,7 @@ app.get('/terabox', async (req, res) => {
 });
 
 app.get('/igstory', async (req, res) => {
-  const { username } = req.body;
+  const { username } = req.query;
   const url = `https://www.save-free.com/process?instagram_url=${username}&type=story&resource=save`;
 
   try {
@@ -1624,8 +1624,18 @@ app.get('/igstory', async (req, res) => {
       }
     });
 
-    const data = await response.json();
-    res.json(data);
+    if (response.ok) {
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json();
+        res.json(data);
+      } else {
+        const text = await response.text();
+        res.send(text);
+      }
+    } else {
+      throw new Error('Request failed with status ' + response.status);
+    }
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
