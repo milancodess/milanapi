@@ -1599,6 +1599,40 @@ app.get('/terabox', async (req, res) => {
   }
 });
 
+app.get('/igstory', async (req, res) => {
+  try {
+    const { username } = req.query;
+    const response = await axios.post('https://www.save-free.com/process', {
+      instagram_url: username,
+      type: 'story',
+      resource: 'save'
+    }, {
+      headers: {
+        accept: 'text/html, */*; q=0.01',
+        "accept": "text/html, */*; q=0.01",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+    "sec-ch-ua-mobile": "?1",
+    "sec-ch-ua-platform": "\"Android\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-requested-with": "XMLHttpRequest",
+    "x-valy-cache": "accpted",
+    "cookie": "cookielawinfo-checkbox-necessary=yes; cookielawinfo-checkbox-functional=no; cookielawinfo-checkbox-performance=no; cookielawinfo-checkbox-analytics=no; cookielawinfo-checkbox-advertisement=no; cookielawinfo-checkbox-others=no; HstCfa4752989=1714332268435; HstCmu4752989=1714332268435; HstCnv4752989=1; HstCns4752989=1; c_ref_4752989=https%3A%2F%2Fwww.google.com%2F; cf_clearance=A3HZtiOAgBZM0saiLbdG0YZkUcPsw9QN4o60dINnlWQ-1714332270-1.0.1.1-JtIaJ897MG6tD8q8DZEMn6L_tK1.fNqdyK4gNVSFLdcVgC3gKtC2z04I8PvbTPN1qrSD0qcp7KdclDy0YEdPBA; CookieLawInfoConsent=eyJuZWNlc3NhcnkiOnRydWUsImZ1bmN0aW9uYWwiOmZhbHNlLCJwZXJmb3JtYW5jZSI6ZmFsc2UsImFuYWx5dGljcyI6ZmFsc2UsImFkdmVydGlzZW1lbnQiOmZhbHNlLCJvdGhlcnMiOmZhbHNlfQ==; viewed_cookie_policy=yes; HstCla4752989=1714332285399; HstPn4752989=2; HstPt4752989=2",
+    "Referer": "https://www.save-free.com/story-downloader/",
+    "Referrer-Policy": "no-referrer-when-downgrade"
+      }
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
