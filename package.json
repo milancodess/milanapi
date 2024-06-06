@@ -52,7 +52,7 @@
     "simsimi-api": "^1.0.3",
     "stream": "^0.0.2",
     "string-similarity": "^4.0.4",
-    "superagent": "^8.0.9",
+    "superagent": "^9.0.2",
     "util": "^0.12.5"
   },
   "devDependencies": {
