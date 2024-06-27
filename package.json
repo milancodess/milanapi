@@ -41,7 +41,7 @@
     "node-fetch": "^2.6.1",
     "npm": "^10.8.1",
     "openai": "^4.48.1",
-    "pastebin-api": "^5.1.6",
+    "pastebin-api": "^7.0.0",
     "path": "^0.12.7",
     "pet-pet-gif": "^1.0.9",
     "prodia.js": "^2.1.5",    "random": "^4.1.0",
