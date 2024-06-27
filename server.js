@@ -1642,6 +1642,35 @@ app.get('/igstory', async (req, res) => {
   }
 });
 
+app.get('/seeresult', async (req, res) => {
+    const { name, symbolNo } = req.query;
+
+    try {
+        const response = await axios.post('https://results.ekantipur.com/submit/see.php', 
+            `fullname=${name}&mobile=9847564915&symbol=${symbolNo}&district=kathmandu`, {
+            headers: {
+                'accept': '*/*',
+                'accept-language': 'en-US,en;q=0.9',
+                'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+                'sec-ch-ua-mobile': '?1',
+                'sec-ch-ua-platform': '"Android"',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'same-origin',
+                'x-requested-with': 'XMLHttpRequest',
+                'Referer': 'https://results.ekantipur.com/see-results-with-marksheet.php',
+                'Referrer-Policy': 'strict-origin-when-cross-origin'
+            }
+        });
+
+        res.send(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('An error occurred while submitting the form');
+    }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
