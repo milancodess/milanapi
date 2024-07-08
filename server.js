@@ -846,11 +846,6 @@ app.get('/tinyurl', (req, res) => {
 app.get('/spotify', async (req, res) => {
   try {
     const { url } = req.query;
-    const apiKey = req.header('MilanCodesLovesMuskan');
-
-    if (!apiKey) {
-      return res.status(400).json({ message: "API key is required" });
-    }
 
     if (!url) {
       return res.status(400).json({ message: "URL is required" });
@@ -865,7 +860,7 @@ app.get('/spotify', async (req, res) => {
       }
     };
 
-    const originalUrl = await getOriginalUrl();
+    const originalUrl = await getOriginalUrl(url);
     const trackId = originalUrl.split("track/")[1].split("?")[0];
     const headers = {
       Origin: "https://spotifydown.com",
@@ -887,7 +882,7 @@ app.get('/spotify', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
-});
+}); 
 
 
 app.get('/ocr', async (req, res) => {
