@@ -134,34 +134,40 @@ app.get("/quote", (req, res) => {
     }
 
     if (quotes.length === 0) {
-      res.status(404).send(JSON.stringify({
+      res.write(JSON.stringify({
         code: 404,
         message: "No quotes found"
       }, null, 2));
-      res.send(JSON.stringify({
-        author: "Milan Bhandari"
+      res.write("\n");
+      res.end(JSON.stringify({
+        author: "Milan Bhandari",
+        contact: "https://www.facebook.com/milancodes"
       }, null, 2));
       return;
     }
 
     const randomIndex = Math.floor(Math.random() * quotes.length);
-    res.status(200).send(JSON.stringify({
+    res.write(JSON.stringify({
       code: 200,
       character: quotes[randomIndex].character,
       quote: quotes[randomIndex].quote,
       anime: quotes[randomIndex].anime
     }, null, 2));
-    res.send(JSON.stringify({
-      author: "Milan Bhandari"
+    res.write("\n");
+    res.end(JSON.stringify({
+      author: "Milan Bhandari",
+      contact: "https://www.facebook.com/milancodes"
     }, null, 2));
   } catch (err) {
     console.error(err);
-    res.status(500).send(JSON.stringify({
+    res.write(JSON.stringify({
       code: 500,
       message: "Internal Server Error"
     }, null, 2));
-    res.send(JSON.stringify({
-      author: "Milan Bhandari"
+    res.write("\n");
+    res.end(JSON.stringify({
+      author: "Milan Bhandari",
+      contact: "https://www.facebook.com/milancodes"
     }, null, 2));
   }
 });
