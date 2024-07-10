@@ -122,7 +122,7 @@ app.get("/quote", (req, res) => {
   res.header("Content-type", "application/json; charset=utf-8");
 
   try {
-    const data = JSON.parse(fs.readFileSync("./quotes.json"));
+    const data = JSON.parse(fs.readFileSync("quotes.json"));
     let quotes;
 
     if (req.query.anime) {
