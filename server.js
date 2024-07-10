@@ -118,11 +118,11 @@ app.get("/dp", (req, res) => {
 })
 
 app.get("/quote", (req, res) => {
-  const result = {};
   res.header("Content-type", "application/json; charset=utf-8");
 
   try {
-    const data = JSON.parse(fs.readFileSync("quotes.json"));
+    const filePath = path.resolve(__dirname, "quotes.json");
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
     let quotes;
 
     if (req.query.anime) {
@@ -134,27 +134,35 @@ app.get("/quote", (req, res) => {
     }
 
     if (quotes.length === 0) {
-      result.code = 404;
-      result.message = "No quotes found";
-      result.author = "Milan Bhandari";
-      res.status(404).send(JSON.stringify(result, null, 2));
+      res.status(404).send(JSON.stringify({
+        code: 404,
+        message: "No quotes found"
+      }, null, 2));
+      res.send(JSON.stringify({
+        author: "Milan Bhandari"
+      }, null, 2));
       return;
     }
 
     const randomIndex = Math.floor(Math.random() * quotes.length);
-    result.code = 200;
-    result.character = quotes[randomIndex].character;
-    result.quote = quotes[randomIndex].quote;
-    result.anime = quotes[randomIndex].anime;
-    result.author = "Milan Bhandari";
-    res.status(200).send(JSON.stringify(result, null, 2));
-    console.log(result);
+    res.status(200).send(JSON.stringify({
+      code: 200,
+      character: quotes[randomIndex].character,
+      quote: quotes[randomIndex].quote,
+      anime: quotes[randomIndex].anime
+    }, null, 2));
+    res.send(JSON.stringify({
+      author: "Milan Bhandari"
+    }, null, 2));
   } catch (err) {
     console.error(err);
-    result.code = 500;
-    result.message = "Internal Server Error";
-    result.author = "Milan Bhandari";
-    res.status(500).send(JSON.stringify(result, null, 2));
+    res.status(500).send(JSON.stringify({
+      code: 500,
+      message: "Internal Server Error"
+    }, null, 2));
+    res.send(JSON.stringify({
+      author: "Milan Bhandari"
+    }, null, 2));
   }
 });
 
