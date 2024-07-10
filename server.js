@@ -120,33 +120,41 @@ app.get("/dp", (req, res) => {
 app.get("/quote", (req, res) => {
   const result = {};
   res.header("Content-type", "application/json; charset=utf-8");
+
   try {
     const data = JSON.parse(fs.readFileSync("./quotes.json"));
     let quotes;
+
     if (req.query.anime) {
-      quotes = data.filter((quote) => stringSimilarity.compareTwoStrings(quote.anime.toLowerCase(), req.query.anime.toLowerCase()) >= 0.5);
+      quotes = data.filter((quote) =>
+        stringSimilarity.compareTwoStrings(quote.anime.toLowerCase(), req.query.anime.toLowerCase()) >= 0.5
+      );
     } else {
       quotes = data;
     }
+
     if (quotes.length === 0) {
       result.code = 404;
       result.message = "No quotes found";
-      res.send(JSON.stringify(result, null, 2));
+      result.author = "Milan Bhandari";
+      res.status(404).send(JSON.stringify(result, null, 2));
       return;
     }
+
     const randomIndex = Math.floor(Math.random() * quotes.length);
     result.code = 200;
-    result.author = "Milan Bhandari";
     result.character = quotes[randomIndex].character;
     result.quote = quotes[randomIndex].quote;
     result.anime = quotes[randomIndex].anime;
-    res.send(JSON.stringify(result, null, 2));
+    result.author = "Milan Bhandari";
+    res.status(200).send(JSON.stringify(result, null, 2));
     console.log(result);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     result.code = 500;
     result.message = "Internal Server Error";
-    res.send(JSON.stringify(result, null, 2));
+    result.author = "Milan Bhandari";
+    res.status(500).send(JSON.stringify(result, null, 2));
   }
 });
 
