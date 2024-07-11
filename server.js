@@ -1725,7 +1725,42 @@ app.get('/twitter', async (req, res) => {
   }
 });
 
+app.get('/reddit', async (req, res) => {
+    const { url } = req.query;
 
+    if (!url) {
+        return res.status(400).json({ error: 'Missing required query parameter: url' });
+    }
+
+    try {
+        const response = await fetch("https://redvid.io/en/fetch", {
+            headers: {
+                "accept": "*/*",
+                "accept-language": "en-US,en;q=0.9",
+                "content-type": "application/json",
+                "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+                "sec-ch-ua-mobile": "?1",
+                "sec-ch-ua-platform": "\"Android\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                "cookie": "cf_clearance=DYcfA7D_23kA8pXkSb5XxbBMXzvGgbtJpjvK_zEhFuk-1720723662-1.0.1.1-XYywtq1Z9Ofvx4uUDgY_Ltwjgp.DmLE_Al3167AQaWATBkRztNW6gGHEl38d8wr4rd13eROmLDBPyZZezgcOVw; XSRF-TOKEN=eyJpdiI6ImsrVEoxS3Vkc1FHNVNLbTVHaTF4RUE9PSIsInZhbHVlIjoiQlpIVVJtcW5xTU9mOTZEV0RHSStML0l6bHRNd3ZCYWwwaDdxaG9uMGVTZlBHY1UyRXFvZ2pLNTBFbG1nb0k1SDdJb2JXSVYxTG9GU0tFS2Y4WlRMN21DOE1OQkhScm5JMkdSaFgyM2cvZTRHMllraW5PRWxqWU5uTUczcFpoaksiLCJtYWMiOiJkZWUwNmM4MGE4NzdjZThkZWFkMzEwMjA2OTczY2MwZTEyOWNlZTY0ZjhlZDEyODRjMDQ0MzcyM2M5YmYxYTJiIiwidGFnIjoiIn0%3D; laravel_session=eyJpdiI6Ik9jZXdBQ3pFcUJ0U1FqV2RDWkIwUEE9PSIsInZhbHVlIjoiT1ZqU3k1blBTMDJIMUpVUU9xbDVFK2E4bzY4NW1VR1JZbTFFSmlnRkVzNjRaNW92UHBac1YwL2djUzUrd0dtWlNKMXpROWczVGFUZDB6N2Yrb3o1SUFERlJmdWY1THE4cEZiNnUrYzVURTR4aWNMR3REZS9EeDAxQThtakZXcDYiLCJtYWMiOiJhNjViM2NmNDQxYWViOGExNGM0NjMyNzI1NGJmMWVlZDg1NmFkOTc4NTIxOTBjZGRhNmRiY2RjYjYzODgwYTllIiwidGFnIjoiIn0%3D",
+                "Referer": "https://redvid.io/",
+                "Referrer-Policy": "strict-origin-when-cross-origin"
+            },
+            body: JSON.stringify({
+                url: url,
+                _token: "5MIHDbW0HvGuhmT2GnfarhQUxoEWvqafD1tb9Yza"
+            }),
+            method: "POST"
+        });
+
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred', details: error.message });
+    }
+});
 
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
