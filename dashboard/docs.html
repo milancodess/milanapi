@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Milan | API Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/monokai-sublime.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #1a1a1a;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        header p {
+            margin: 0.5rem 0 0;
+            font-size: 1.1rem;
+        }
+        
+        header a {
+            text-decoration: none;
+            color: #FFFFFF;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #444;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        code {
+            font-family: "Courier New", Courier, monospace;
+            background-color: #333;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .feature {
+            flex: 1 1 45%;
+            margin: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            background-color: #555;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature p {
+            font-size: 1.1rem;
+        }
+
+        .code-block {
+            background-color: #333;
+            border: 1px solid #777;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 2rem;
+            overflow-x: auto;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 1px;
+            background-color: #1a1a1a;
+            color: #bbb;
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .features {
+                flex-direction: column;
+            }
+
+            .feature {
+                flex-basis: 100%;
+                margin-bottom: 1rem;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1> API Documentation</h1>
+        <p>MADE BY <a class="contact-link" href="https://www.facebook.com/milancodes" target="_blank">MILAN</a></p>
+    </header>
+    <div class="container">
+        <p>To use the API, make a GET request to <code>endpoints</code> with query parameters as needed.</p>
+        
+        <div class="code-block">
+            <p>Spotify Downloader</p>
+<pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const spoUrl = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/spotify?url=${encodeURIComponent(spoUrl)}`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+        </div>
+        
+        <div class="code-block">
+  <p>Spotify Search</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const query = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/spotisearch?query=${encodeURIComponent(query)}`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+<div class="code-block">
+  <p>2080 SEE Result</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const { name, symbolNo }  = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/seeresult?name=${encodeURIComponent(name)}&symbolNo=${encodeURIComponent(symbolNo)}`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+<div class="code-block">
+            <p>Optical Character Recognition ( OCR )</p>
+<pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData(args) {
+  try {
+    const imageUrl = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/ocr?url=${encodeURIComponent(imageUrl)}`;
+    const response = await axios.get(apiurl);
+    const description = response.data.responses[0].textAnnotations[0].description;
+    console.log(description);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData(args);
+</code></pre>
+</div>
+        
+        <div class="code-block">
+  <p>The Kathmandu Post News</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const query = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/tkp`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+<div class="code-block">
+  <p>The Kathmandu Post News Scraper</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const newsUrl = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/news?newsUrl=${encodeURIComponent(newsUrl)}`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+<div class="code-block">
+  <p>Infra AI</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const query = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/infra?query=${encodeURIComponent(name)}`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+        <div class="code-block">
+            <p>Random Anime Quotes</p>
+            <pre><code class="javascript">const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const apiurl = 'https://www.bhandarimilan.info.np/quote';
+    const response = await axios.get(apiurl);
+    const message = `From: ${response.data.anime}\n\nQuote: ${response.data.quote}\n\nBy: ${response.data.character}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();</code></pre>
+        </div>
+        
+        <div class="code-block">
+            <p>Anime Quotes With Anime Name</p>
+<pre><code class="javascript">const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const animeName = args.join(" ");
+    const apiurl = 'https://www.bhandarimilan.info.np/quote?anime=${encodeURIComponent(animeName)}';
+    const response = await axios.get(apiurl);
+    const message = `From: ${response.data.anime}\n\nQuote: ${response.data.quote}\n\nBy: ${response.data.character}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();</code></pre>
+        
+        </div>
+        
+        <div class="code-block">
+            <p>Web Screenshot</p>
+<pre><code class="javascript">
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+
+const args = process.argv.slice(2);
+
+async function fetchData() {
+  try {
+    const query = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/screenshot?url=${encodeURIComponent(query)}`;
+    
+    const response = await axios.get(apiurl, { responseType: 'arraybuffer' });
+    
+    const imagePath = path.join(__dirname, 'image.png');
+    
+    fs.writeFileSync(imagePath, response.data);
+    
+    console.log('Image saved to', imagePath);
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+fetchData();
+</code></pre>
+        
+        </div>
+        
+        <div class="code-block">
+            <p>Instagram Information</p>
+<pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const username = args.join(" ");
+    const apiurl = 'https://www.bhandarimilan.info.np/iginfo?username=${encodeURIComponent(username)}';
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+ </code></pre>
+        
+        </div>
+        
+        <div class="code-block">
+            <p> Pinterest Images</p>
+<pre><code class="javascript">const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const imageQuery = args.join(" ");
+    const apiurl = 'https://www.bhandarimilan.info.np/pinterest?query=${encodeURIComponent(imageQuery)}';
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+<div class="code-block">
+  <p>GitHub Information</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const userName = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/github?username=${encodeURIComponent(userName)}`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+        
+        <div class="code-block">
+            <p>Lyrics </p>
+<pre><code class="javascript">const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const songName = args.join(" ");
+    const apiurl = 'https://www.bhandarimilan.info.np/lyrics2?songname=${encodeURIComponent(songName)}';
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();</code></pre>
+        
+        </div>
+        
+        <div class="code-block">
+            <p>JavaScript Code Obfuscator</p>
+<pre><code class="javascript">const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const code = args.join(" ");
+    const apiurl = 'https://milanbhandari.imageapi.repl.co/encrypt?code=${encodeURIComponent(code)}';
+    const response = await axios.get(apiurl);
+    const message = `${response.data.obfuscatedCode}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+<div class="code-block">
+  <p>Transcribe</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const url = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/transcribe?url=${encodeURIComponent(url)}`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+<div class="code-block">
+  <p>Nepali Rashifal</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const query = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/rashifal`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+<div class="code-block">
+  <p>Movie Clips</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const query = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/clips?query=${encodeURIComponent(query)}`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+<div class="code-block">
+  <p>9anime</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const query = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/9anime?query=${encodeURIComponent(query)}`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+
+<div class="code-block">
+  <p>Facebook UID</p>
+  <pre><code class="javascript">
+const axios = require('axios');
+
+async function fetchData() {
+  try {
+    const facebookLink = args.join(" ");
+    const apiurl = `https://www.bhandarimilan.info.np/fbuid?query=${encodeURIComponent(facebookLink)}`;
+    const response = await axios.get(apiurl);
+    const message = `${response.data}`;
+    console.log(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+fetchData();
+</code></pre>
+</div>
+    <div class="footer">
+        <p>&copy; 2023 MILAN API BY <a class="contact-link" href="https://www.facebook.com/milancodes" target="_blank">MILAN</a></p>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+    <script>
+      
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightBlock(block);
+            });
+        });
+    </script>
+</body>
+</html>
