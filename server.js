@@ -1755,8 +1755,16 @@ app.get('/reddit', async (req, res) => {
             method: "POST"
         });
 
-        const data = await response.json();
-        res.json(data);
+        const contentType = response.headers.get('content-type');
+
+        let data;
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            data = await response.text();
+        }
+
+        res.json({ data });
     } catch (error) {
         res.status(500).json({ error: 'An error occurred', details: error.message });
     }
