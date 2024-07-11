@@ -1696,9 +1696,13 @@ app.get('/twitter', async (req, res) => {
   try {
     const url = req.query.url;
 
-    const idMatch = url.match(/id=([0-9]+)/);
+    if (!url) {
+      return res.status(400).send('URL parameter is required');
+    }
+
+    const idMatch = url.match(/status\/(\d+)/);
     if (!idMatch) {
-      return res.status(400).send('Invalid link format');
+      return res.status(400).send('Invalid URL format');
     }
     const id = idMatch[1];
 
@@ -1720,6 +1724,7 @@ app.get('/twitter', async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
 
 
 app.listen(port, "0.0.0.0", function () {
