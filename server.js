@@ -1692,6 +1692,36 @@ app.get('/seeresult', async (req, res) => {
     }
 });
 
+app.get('/twitter', async (req, res) => {
+  try {
+    const url = req.query.url;
+
+    const idMatch = url.match(/id=([0-9]+)/);
+    if (!idMatch) {
+      return res.status(400).send('Invalid link format');
+    }
+    const id = idMatch[1];
+
+    const response = await axios.get(`https://api.twitterpicker.com/tweet/mediav2?id=${id}&gt=2&capmode=true`, {
+      headers: {
+        'accept': '*/*',
+        'accept-language': 'en-US,en;q=0.9',
+        'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+        'sec-ch-ua-mobile': '?1',
+        'sec-ch-ua-platform': '"Android"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'cross-site',
+        'x-cap': 'capmode'
+      }
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
