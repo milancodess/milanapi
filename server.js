@@ -1620,49 +1620,6 @@ app.get('/terabox', async (req, res) => {
   }
 });
 
-app.get('/igstory', async (req, res) => {
-  const { username } = req.query;
-  const url = `https://www.save-free.com/process?instagram_url=${username}&type=story&resource=save`;
-
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'accept': 'text/html, */*; q=0.01',
-        'accept-language': 'en-US,en;q=0.9',
-        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
-        'sec-ch-ua-mobile': '?1',
-        'sec-ch-ua-platform': '"Android"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
-        'x-requested-with': 'XMLHttpRequest',
-        'x-valy-cache': 'accpted',
-        'cookie': 'cookielawinfo-checkbox-necessary=yes; cookielawinfo-checkbox-functional=no; cookielawinfo-checkbox-performance=no; cookielawinfo-checkbox-analytics=no; cookielawinfo-checkbox-advertisement=no; cookielawinfo-checkbox-others=no; HstCfa4752989=1714332268435; HstCmu4752989=1714332268435; HstCnv4752989=1; HstCns4752989=1; c_ref_4752989=https%3A%2F%2Fwww.google.com%2F; cf_clearance=A3HZtiOAgBZM0saiLbdG0YZkUcPsw9QN4o60dINnlWQ-1714332270-1.0.1.1-JtIaJ897MG6tD8q8DZEMn6L_tK1.fNqdyK4gNVSFLdcVgC3gKtC2z04I8PvbTPN1qrSD0qcp7KdclDy0YEdPBA; CookieLawInfoConsent=eyJuZWNlc3NhcnkiOnRydWUsImZ1bmN0aW9uYWwiOmZhbHNlLCJwZXJmb3JtYW5jZSI6ZmFsc2UsImFuYWx5dGljcyI6ZmFsc2UsImFkdmVydGlzZW1lbnQiOmZhbHNlLCJvdGhlcnMiOmZhbHNlfQ==; viewed_cookie_policy=yes; HstCla4752989=1714332285399; HstPn4752989=2; HstPt4752989=2',
-        'Referer': 'https://www.save-free.com/story-downloader/',
-        'Referrer-Policy': 'no-referrer-when-downgrade'
-      }
-    });
-
-    if (response.ok) {
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
-        res.json(data);
-      } else {
-        const text = await response.text();
-        res.send(text);
-      }
-    } else {
-      throw new Error('Request failed with status ' + response.status);
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
 app.get('/seeresult', async (req, res) => {
     const { name, symbolNo } = req.query;
 
@@ -1681,7 +1638,7 @@ app.get('/seeresult', async (req, res) => {
                 'sec-fetch-site': 'same-origin',
                 'x-requested-with': 'XMLHttpRequest',
                 'Referer': 'https://results.ekantipur.com/see-results-with-marksheet.php',
-                'Referrer-Policy': 'strict-origin-when-cross-origin'
+                'Refrrer-Policy': 'strict-origin-when-cross-origin'
             }
         });
 
@@ -1692,54 +1649,22 @@ app.get('/seeresult', async (req, res) => {
     }
 });
 
-app.get('/twitter', async (req, res) => {
-  try {
-    const url = req.query.url;
-
-    if (!url) {
-      return res.status(400).send('URL parameter is required');
-    }
-
-    const idMatch = url.match(/status\/(\d+)/);
-    if (!idMatch) {
-      return res.status(400).send('Invalid URL format');
-    }
-    const id = idMatch[1];
-
-    const response = await axios.get(`https://api.twitterpicker.com/tweet/mediav2?id=${id}&gt=2&capmode=true`, {
-      headers: {
-        'accept': '*/*',
-        'accept-language': 'en-US,en;q=0.9',
-        'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
-        'sec-ch-ua-mobile': '?1',
-        'sec-ch-ua-platform': '"Android"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'cross-site',
-        'x-cap': 'capmode'
-      }
-    });
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
-const snapsave = async (url) => {
+const snapsave = async (url: string) => {
   try {
     if (!url.match(/(?:https?:\/\/(web\.|www\.|m\.)?(facebook|fb)\.(com|watch)\S+)?$/) && !url.match(/(https|http):\/\/www.instagram.com\/(p|reel|tv|stories)/gi)) {
       return { developer: '@Milan Bhandari', status: false, msg: 'Link URL not valid' };
     }
 
-    function decodeSnapApp(args) {
+    function decodeSnapApp(args: string[]): string {
       let [h, u, n, t, e, r] = args;
-      function decode(d, e, f) {
+      function decode(d: string, e: number, f: number): string {
         const g = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/'.split('');
         let h = g.slice(0, e);
         let i = g.slice(0, f);
         let j = d.split('').reverse().reduce((a, b, c) => {
           if (h.indexOf(b) !== -1)
             return a += h.indexOf(b) * (Math.pow(e, c));
+          return a;
         }, 0);
         let k = '';
         while (j > 0) {
@@ -1748,7 +1673,7 @@ const snapsave = async (url) => {
         }
         return k || '0';
       }
-      r = '';
+      let r = '';
       for (let i = 0, len = h.length; i < len; i++) {
         let s = "";
         while (h[i] !== n[e]) {
@@ -1762,20 +1687,20 @@ const snapsave = async (url) => {
       return decodeURIComponent(encodeURIComponent(r));
     }
 
-    function getEncodedSnapApp(data) {
+    function getEncodedSnapApp(data: string): string[] {
       return data.split('decodeURIComponent(escape(r))}(')[1]
         .split('))')[0]
         .split(',')
         .map(v => v.replace(/"/g, '').trim());
     }
 
-    function getDecodedSnapSave(data) {
+    function getDecodedSnapSave(data: string): string {
       return data.split('getElementById("download-section").innerHTML = "')[1]
         .split('"; document.getElementById("inputData").remove(); ')[0]
         .replace(/\\(\\)?/g, '');
     }
 
-    function decryptSnapSave(data) {
+    function decryptSnapSave(data: string): string {
       return getDecodedSnapSave(decodeSnapApp(getEncodedSnapApp(data)));
     }
 
@@ -1792,7 +1717,7 @@ const snapsave = async (url) => {
     const html = response.data;
     const decode = decryptSnapSave(html);
     const $ = cheerio.load(decode);
-    const results = [];
+    const results: any[] = [];
 
     if ($('table.table').length || $('article.media > figure').length) {
       const thumbnail = $('article.media > figure').find('img').attr('src');
@@ -1831,12 +1756,12 @@ const snapsave = async (url) => {
     }
 
     return { developer: '@Milan Bhandari', status: true, data: results };
-  } catch (e) {
+  } catch (e: any) {
     return { developer: '@Milan Bhandari', status: false, msg: e.message };
   }
 };
 
-app.post('/instadownloader , async (req, res) => {
+app.post('/instadownloader', async (req, res) => {
   const { url } = req.body;
   const result = await snapsave(url);
   res.json(result);
