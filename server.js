@@ -1730,6 +1730,42 @@ app.get('/reddit', async (req, res) => {
   }
 });
 
+app.get('/reddit', async (req, res) => {
+  try {
+    const url = req.query.url; 
+
+    if (!url) {
+      return res.status(400).send('URL query parameter is required.');
+    }
+
+    const response = await axios.post('https://redvid.io/en/fetch', {
+      url: url,
+      _token: 'ueiNjO6jNhEsXtFXWtH2FMrFUlh8BE1gBdQHuF3Y'
+    }, {
+      headers: {
+        "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/json",
+    "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+    "sec-ch-ua-mobile": "?1",
+    "sec-ch-ua-platform": "\"Android\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "cookie": "cf_clearance=YUQpWp1mDXKcm46OI.0jhXY90N8Y7y9FHealCkbqFRI-1721152387-1.0.1.1-yk1gSVrN66kT0tChF2_PMVhxFVjpCQ7BkOz4h2Rs9JB9nNNJ.5HDMXaJ2kA_LpkRIQNyoEb65_ntal2QcEOBqQ; XSRF-TOKEN=eyJpdiI6InVMbmRxZUxJQnFNK2ZTZlcwdzBZbXc9PSIsInZhbHVlIjoiWmt4TGFzU2I0eVl6TDFpRUN4OUJibWZHSURpb1JMK0lldjZaa09LZnVOcWZBM2RyRlhPaHdLVGxuZ2FNUTluc2tFZTNqemIxUS9xR3hENS9VVVA0UHY3K0QweDZ4a1ltNHU3dTYzbTlzUmNkNDIrNjJVaVEzcHZWSkdHV3ZzNnkiLCJtYWMiOiJhZmJjNDc4OGJiMzhmMGVmYWJlM2RmNWIxNmIyYWU3ZTVlODJiNmQ0MDVlZDdmYjBmMmY5NjZmYWY1N2RiYjkxIiwidGFnIjoiIn0%3D; laravel_session=eyJpdiI6IjFWZUl5a0UzSjVrRzVjSW8vNSsxZVE9PSIsInZhbHVlIjoieWVuRjVQcEJ5cDhCWFNBRGhDL2FOdjZuU2FYK0FKS3EreXlBY0g4b0VpTFN3QmNBS21tbStnSlpQamMvMjdjYmkyV3pETzhzQzErUjNUbTJIVERBcURMVXpteGNhVmFlUE9nQUQrZ3ltdk1MdzhnL2xQNjE3cE1HM3BVRm5TakciLCJtYWMiOiIwNTgzNmJkMzQ0ZmE2ZTcyMjM5MzcxMTcxYmEyNzhmN2M0YWRmNzk1NWY3MzUxMTM0Y2RkNmUwMDAxOThkNGUzIiwidGFnIjoiIn0%3D",
+    "Referer": "https://redvid.io/",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+      },
+      withCredentials: true // Include cookies in the request
+    });
+
+    res.json(response.data); // Send the response data back to the client
+  } catch (error) {
+    console.error('Error making POST request:', error);
+    res.status(500).send('Error making request');
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
