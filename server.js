@@ -1649,6 +1649,68 @@ app.get('/seeresult', async (req, res) => {
     }
 });
 
+app.get('/spoti-track', async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).json({ error: 'A valid URL must be provided.' });
+  }
+
+  const match = url.match(/playlist\/(.*?)\?/);
+  if (!match || !match[1]) {
+    return res.status(400).json({ error: 'Invalid Spotify playlist URL.' });
+  }
+
+  const trackID = match[1];
+  const metadataUrl = `https://api.spotifydown.com/metadata/playlist/${trackID}`;
+  const trackListUrl = `https://api.spotifydown.com/trackList/playlist/${trackID}`;
+
+  try {
+    const [metadataResponse, trackListResponse] = await Promise.all([
+      fetch(metadataUrl, {
+        headers: {
+          'accept': '*/*',
+          'accept-language': 'en-US,en;q=0.9',
+          'if-none-match': 'W/"4f79-I6hS5sNRsHE+EECIegw+8YfH6zE"',
+          'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+          'sec-ch-ua-mobile': '?1',
+          'sec-ch-ua-platform': '"Android"',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-site',
+          'Referer': 'https://spotifydown.com/',
+          'Referrer-Policy': 'strict-origin-when-cross-origin'
+        },
+        method: 'GET'
+      }),
+      fetch(trackListUrl, {
+        headers: {
+          'accept': '*/*',
+          'accept-language': 'en-US,en;q=0.9',
+          'if-none-match': 'W/"4f79-I6hS5sNRsHE+EECIegw+8YfH6zE"',
+          'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+          'sec-ch-ua-mobile': '?1',
+          'sec-ch-ua-platform': '"Android"',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-site',
+          'Referer': 'https://spotifydown.com/',
+          'Referrer-Policy': 'strict-origin-when-cross-origin'
+        },
+        method: 'GET'
+      })
+    ]);
+
+    const metadata = await metadataResponse.json();
+    const trackList = await trackListResponse.json();
+
+    res.json({ metadata, trackList });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch data from the provided URLs.' });
+  }
+});
+
+		    
 
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
