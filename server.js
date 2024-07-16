@@ -1698,7 +1698,37 @@ app.get('/spotiplaylist', async (req, res) => {
   }
 });
 
-		    
+const getRedditVideoUrls = async (postUrl) => {
+  try {
+    const response = await axios.get(postUrl);
+    const $ = cheerio.load(response.data);
+    
+    const videoUrls = [];
+    $('video').each((i, video) => {
+      videoUrls.push($(video).attr('src'));
+    });
+
+    return videoUrls;
+  } catch (error) {
+    console.error('Error fetching Reddit post:', error.message);
+    throw new Error('Failed to fetch video URLs');
+  }
+};
+
+app.get('/reddit', async (req, res) => {
+  const postUrl = req.query.url;
+
+  if (!postUrl) {
+    return res.status(400).json({ error: "The 'url' query parameter is required." });
+  }
+
+  try {
+    const videoUrls = await getRedditVideoUrls(postUrl);
+    res.json({ videoUrls });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
