@@ -1675,7 +1675,24 @@ app.get('/spotiplaylist', async (req, res) => {
       }
     });
 
-    res.send(response.data);
+    // Modify the response
+    const modifiedResponse = response.data;
+    
+    if (modifiedResponse.tracks) {
+      modifiedResponse.tracks = modifiedResponse.tracks.map(track => {
+        if (track.uri && track.uri.startsWith('spotify:track:')) {
+          const trackId = track.uri.split(':')[2];
+          return {
+            ...track,
+            url: `https://open.spotify.com/track/${trackId}`,
+            uri: undefined // Remove the uri field
+          };
+        }
+        return track;
+      });
+    }
+
+    res.send(modifiedResponse);
   } catch (error) {
     res.status(500).send(error.toString());
   }
