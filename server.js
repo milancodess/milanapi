@@ -878,12 +878,17 @@ app.get('/spotify', async (req, res) => {
         const response = await fetch(url);
         return response.url;
       } catch (error) {
-        throw new Error("Please input a valid URL");
+        throw new Error("Failed to fetch the original URL. Please input a valid URL.");
       }
     };
 
-    const originalUrl = await getOriginalUrl(url);
-    const trackId = originalUrl.split("track/")[1].split("?")[0];
+    const originalUrl = await getOriginalUrl();
+    const trackId = originalUrl.split("track/")[1]?.split("?")[0];
+
+    if (!trackId) {
+      return res.status(400).json({ message: "Invalid Spotify track URL format." });
+    }
+
     const headers = {
       Origin: "https://spotifydown.com",
       Referer: "https://spotifydown.com/",
@@ -901,10 +906,10 @@ app.get('/spotify', async (req, res) => {
     const response = await axios.get(apiUrl, { headers });
     res.json(response.data);
   } catch (error) {
-    console.error(error);
+    console.error(error.message);
     res.status(500).json({ message: "Internal server error" });
   }
-}); 
+});
 
 
 app.get('/ocr', async (req, res) => {
