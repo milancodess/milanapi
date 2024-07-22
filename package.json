@@ -43,7 +43,6 @@
     "prodia.js": "^2.1.5",
     "random": "^4.1.0",
     "replicate": "^0.30.1",
-    "@octokit/rest": "^21.0.1",
     "request": "^2.88.2",
     "simsimi-api": "^1.0.3",
     "string-similarity": "^4.0.4",
