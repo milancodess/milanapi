@@ -6,7 +6,6 @@ import multer from 'multer';
 import stream from 'stream';
 import FormData from 'form-data';
 import qs from "qs";
-import { Octokit } from '@octokit/rest';
 import useragent from 'express-useragent';
 import JavaScriptObfuscator from 'javascript-obfuscator';
 import unlinkSync from 'fs-extra';
