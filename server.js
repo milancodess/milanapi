@@ -1795,60 +1795,6 @@ async function generateImage(prompt) {
   }
 }
 
-async function fetchImageDetails(uid) {
-  const url = `https://photoeditor.ai/api/v1/generate-image/${uid}/`;
-
-  try {
-    const response = await axios.get(url, {
-      headers: {
-        "accept": "*/*",
-        "accept-language": "en-US,en;q=0.9",
-        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
-        "sec-ch-ua-mobile": "?1",
-        "sec-ch-ua-platform": "\"Android\"",
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
-        "cookie": "cf-c=NP; cf-t=1",
-        "Referer": "https://photoeditor.ai/ai-image-generator",
-        "Referrer-Policy": "strict-origin-when-cross-origin"
-      }
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error(`Error fetching image details: ${error.message}`);
-  }
-}
-
-async function waitForImage(uid, timeout = 60000, interval = 5000) {
-  const startTime = Date.now();
-
-  while (Date.now() - startTime < timeout) {
-    const details = await fetchImageDetails(uid);
-    if (details.status !== 'processing') {
-      return details;
-    }
-    await new Promise(resolve => setTimeout(resolve, interval));
-  }
-  throw new Error('Image processing timed out');
-}
-
-app.get('/genimg', async (req, res) => {
-  const prompt = req.query.prompt || 'Cat';
-
-  try {
-    const imageData = await generateImage(prompt);
-    const uid = imageData.uid;
-    if (!uid) {
-      throw new Error('UID not found in response from generate-image API');
-    }
-    const imageDetails = await waitForImage(uid);
-    res.json(imageDetails);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
