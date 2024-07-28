@@ -1771,7 +1771,7 @@ async function waitForImage(uid, timeout = 60000, interval = 5000) {
   throw new Error('Image processing timed out');
 }
 
-app.get('/imagine', async (req, res) => {
+app.get('/imagine69', async (req, res) => {
   const prompt = req.query.prompt || 'Cat';
 
   try {
