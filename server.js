@@ -6,6 +6,7 @@ import multer from 'multer';
 import stream from 'stream';
 import FormData from 'form-data';
 import qs from "qs";
+import { client } from "@gradio/client";
 import useragent from 'express-useragent';
 import JavaScriptObfuscator from 'javascript-obfuscator';
 import unlinkSync from 'fs-extra';
@@ -1818,6 +1819,62 @@ app.get('/imagine69', async (req, res) => {
   }
 });
 
+
+const styles = ["(None)", "Anime", "Cinematic", "Photographic", "Manga", "Digital Art", "Pixel art", "Fantasy art", "Fantasy art", "Neonpunk", "3D Model" ];
+app.get('/niji', async (req, res) => {
+    const {
+        prompt,
+        sdxl_style,
+        negative_prompt = "nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name, ",
+        resolution = "896 x 1152",
+        guidance_scale = 7,
+        num_inference_steps = 28,
+        seed = 1601443227,
+        sampler = "Euler a",
+        add_quality_tags = true,
+        quality_tags = "Standard",
+        use_upscaler = null
+    } = req.query;
+
+    if (!prompt) {
+        return res.status(400).json({ error: "Missing required query parameter: prompt" });
+    }
+
+    const sdxl_style_index = sdxl_style !== undefined ? Number(sdxl_style) : 0;
+    if (isNaN(sdxl_style_index) || sdxl_style_index < 0 || sdxl_style_index >= styles.length) {
+        return res.status(400).json({ error: "Invalid sdxl_style index. It must be a number between 0 and " + (styles.length - 1) });
+    }
+
+    const selected_style = styles[sdxl_style_index];
+    const [width, height] = resolution.split(' x ').map(Number);
+
+    try {
+        const gradioApp = await client("Linaqruf/animagine-xl");
+        const result = await gradioApp.predict("/run", [
+            prompt,
+            negative_prompt,
+            Number(seed),
+            width,
+            height,
+            Number(guidance_scale),
+            Number(num_inference_steps),
+            sampler,
+            resolution,
+            selected_style,
+            quality_tags,
+            use_upscaler === 'true',
+            0, // Assuming strength is not provided, set a default value
+            1, // Assuming upscale by is not provided, set a default value
+            add_quality_tags === 'true'
+        ]);
+
+        res.json(result.data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+							      
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
