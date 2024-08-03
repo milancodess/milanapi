@@ -1908,7 +1908,40 @@ app.get('/niji', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-							      
+
+app.get('/tik', async (req, res) => {
+  try {
+    const bodyContent = 
+      `------WebKitFormBoundaryFyTeArAjKAhK8ziF\r\n` +
+      `Content-Disposition: form-data; name="url"\r\n\r\n` +
+      `https://vt.tiktok.com/ZSYEDf4gA/\r\n` +
+      `------WebKitFormBoundaryFyTeArAjKAhK8ziF--\r\n`;
+
+    const response = await fetch("https://snaptik.gg/check/", {
+      method: "POST",
+      headers: {
+        "accept": "*/*",
+        "accept-language": "en-US,en;q=0.9",
+        "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryFyTeArAjKAhK8ziF",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "Referer": "https://snaptik.gg/",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+      },
+      body: bodyContent
+    });
+    
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
