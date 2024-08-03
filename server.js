@@ -1934,9 +1934,20 @@ app.get('/tik', async (req, res) => {
       },
       body: bodyContent
     });
-    
+
     const data = await response.json();
-    res.json(data);
+
+    if (data.html) {
+      const $ = cheerio.load(data.html);
+      const downloadUrl = $('.down-right a').attr('href');
+      if (downloadUrl) {
+        res.json({ downloadUrl });
+      } else {
+        res.status(404).json({ error: 'Download URL not found' });
+      }
+    } else {
+      res.status(500).json({ error: 'Invalid response from Snaptik' });
+    }
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
