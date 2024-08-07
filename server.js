@@ -1972,7 +1972,7 @@ app.get('/tik', async (req, res) => {
   }
 });
 
-app.post('/imageai69', async (req, res) => {
+app.get('/imageai69', async (req, res) => {
     const { prompt, seed = 0, randomize_seed = true, width = 1024, height = 1024, num_inference_steps = 4 } = req.body;
 
     try {
