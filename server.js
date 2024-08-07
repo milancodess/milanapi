@@ -1973,21 +1973,18 @@ app.get('/tik', async (req, res) => {
 });
 
 app.get('/imageai69', async (req, res) => {
-    const { prompt, seed = 0, randomize_seed = true, width = 1024, height = 1024, num_inference_steps = 4 } = req.body;
-
-    if (!prompt) {
-        return res.status(400).json({ error: "No value provided for required parameter 'prompt'" });
-    }
-
+    // Use 'cat' as the default value for prompt if it's not provided
+    const prompt = req.body.prompt || 'cat';
+    
     try {
         const client = await Client.connect("black-forest-labs/FLUX.1-schnell");
         const result = await client.predict("/infer", {
-            prompt,
-            seed,
-            randomize_seed,
-            width,
-            height,
-            num_inference_steps,
+            prompt, // Use the default or provided prompt
+            seed: 2147483647,
+            randomize_seed: true,
+            width: 1024,
+            height: 1024,
+            num_inference_steps: 4
         });
 
         res.json(result.data);
