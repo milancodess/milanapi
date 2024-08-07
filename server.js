@@ -1993,6 +1993,41 @@ app.get('/imageai69', async (req, res) => {
     }
 });
 
+app.get('/alldl', async (req, res) => {
+    const videoUrl = req.query.url;
+
+    if (!videoUrl) {
+        return res.status(400).json({ error: 'Missing videoUrl query parameter' });
+    }
+
+    try {
+        const response = await axios.post(
+            'https://anydownloader.com/wp-json/aio-dl/video-data/',
+            `url=${videoUrl}`,
+            {
+                headers: {
+                    'accept': '*/*',
+                    'accept-language': 'en-US,en;q=0.9',
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+                    'sec-ch-ua-mobile': '?1',
+                    'sec-ch-ua-platform': '"Android"',
+                    'sec-fetch-dest': 'empty',
+                    'sec-fetch-mode': 'cors',
+                    'sec-fetch-site': 'same-origin',
+                    'cookie': 'pll_language=en; PHPSESSID=a4tkjou4bgq5hrkem5pepbfput; cf_clearance=_99N6BMSCmyaL.fh8aFQ1DrtbNAIf09GF9X1V9ixYCQ-1723039235-1.0.1.1-cKeTk9HxfSUpqpqxsM9IzCZEroCyN.BV3H4U59_W8IGZVBF5f8awYEmHy0NiFKxbCum7KdUK7Ar_eBeoCWhxpQ',
+                    'Referer': 'https://anydownloader.com/en/',
+                    'Referrer-Policy': 'strict-origin-when-cross-origin'
+                }
+            }
+        );
+
+        res.json(response.data);
+    } catch (error) {
+        res.status(error.response ? error.response.status : 500).json({ error: error.message });
+    }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
