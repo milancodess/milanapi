@@ -6,6 +6,7 @@ import multer from 'multer';
 import stream from 'stream';
 import FormData from 'form-data';
 import qs from "qs";
+import { Client } from '@gradio/client';
 import useragent from 'express-useragent';
 import JavaScriptObfuscator from 'javascript-obfuscator';
 import unlinkSync from 'fs-extra';
@@ -1969,6 +1970,26 @@ app.get('/tik', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
+});
+
+app.post('/imageai69', async (req, res) => {
+    const { prompt, seed = 0, randomize_seed = true, width = 1024, height = 1024, num_inference_steps = 4 } = req.body;
+
+    try {
+        const client = await Client.connect("black-forest-labs/FLUX.1-schnell");
+        const result = await client.predict("/infer", {
+            prompt,
+            seed,
+            randomize_seed,
+            width,
+            height,
+            num_inference_steps,
+        });
+
+        res.json(result.data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.listen(port, "0.0.0.0", function () {
