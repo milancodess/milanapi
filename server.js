@@ -1975,6 +1975,10 @@ app.get('/tik', async (req, res) => {
 app.get('/imageai69', async (req, res) => {
     const { prompt, seed = 0, randomize_seed = true, width = 1024, height = 1024, num_inference_steps = 4 } = req.body;
 
+    if (!prompt) {
+        return res.status(400).json({ error: "No value provided for required parameter 'prompt'" });
+    }
+
     try {
         const client = await Client.connect("black-forest-labs/FLUX.1-schnell");
         const result = await client.predict("/infer", {
