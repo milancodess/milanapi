@@ -1,24 +1,14 @@
 {
   "name": "milanbhandari",
   "version": "1.0.0",
-  "type": "module",
   "description": "A Node.js Express API",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "lint": "eslint ./",
-    "lint:fix": "eslint --fix ./"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/milan-says/image-random-api.git"
+    "start": "node server.js"
   },
   "author": "MILAN",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/milan-says/image-random-api/issues"
-  },
-  "homepage": "https://github.com/milan-says/image-random-api#readme",
+  "type": "module",
   "dependencies": {
     "@gradio/client": "^1.4.0",
     "axios": "^1.4.0",
