@@ -21,6 +21,8 @@ import stringSimilarity from "string-similarity";
 import superagent from 'superagent';
 import fs from "fs";
 import axios from "axios";
+import ytdl from 'ytdl-core';
+import ytSearch from 'yt-search';
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import path from "path";
@@ -1992,6 +1994,40 @@ app.get('/imageai69', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+app.get('/ytb', async (req, res) => {
+    const query = req.query.q;
+    if (!query) {
+        return res.status(400).send({ error: 'Query parameter "q" is required' });
+    }
+
+    try {
+        const searchResults = await searchYouTube(query);
+        const videoDetails = await Promise.all(searchResults.map(video => getVideoDetails(video.url)));
+        res.json(videoDetails);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: 'Internal Server Error' });
+    }
+});
+
+async function searchYouTube(query) {
+    const results = await ytSearch(query);
+    return results.videos.slice(0, 15);
+}
+
+async function getVideoDetails(videoUrl) {
+    const info = await ytdl.getInfo(videoUrl);
+    const videoDetails = {
+        title: info.videoDetails.title,
+        thumbnail: info.videoDetails.thumbnails[0].url,
+        url: videoUrl,
+        downloadable_audio: ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url,
+        downloadable_video: ytdl.chooseFormat(info.formats, { quality: 'highest' }).url,
+        channel: info.videoDetails.author.name,
+    };
+    return videoDetails;
+}
 
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
