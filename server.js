@@ -2029,6 +2029,70 @@ async function getVideoDetails(videoUrl) {
     return videoDetails;
 }
 
+app.get('/executec', async (req, res) => {
+  const cLangCode = req.query.code;
+
+  if (!cLangCode) {
+    return res.status(400).json({ error: 'Code is required' });
+  }
+
+  try {
+    const response = await axios.post('https://onecompiler.com/api/code/exec', {
+      name: "C",
+      title: "C Language Hello World",
+      version: "latest",
+      mode: "c_cpp",
+      description: null,
+      extension: "c",
+      languageType: "programming",
+      active: true,
+      properties: {
+        language: "c",
+        docs: true,
+        tutorials: true,
+        cheatsheets: true,
+        filesEditable: true,
+        filesDeletable: true,
+        files: [
+          {
+            name: "Main.c",
+            content: cLangCode
+          }
+        ],
+        newFileOptions: [
+          {
+            helpText: "New Text file",
+            name: "sample${i}.txt",
+            content: "Sample text file!"
+          }
+        ]
+      },
+      visibility: "public"
+    }, {
+      headers: {
+        'accept': '*/*',
+        'accept-language': 'en-US,en;q=0.9',
+        'authorization': 'Bearer undefined',
+        'content-type': 'application/json',
+        'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+        'sec-ch-ua-mobile': '?1',
+        'sec-ch-ua-platform': '"Android"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-origin',
+        'cookie': '_ga=GA1.2.198543036.1723055976; _gid=GA1.2.1258452523.1723055976; _gat=1',
+        'Referer': 'https://onecompiler.com/c',
+        'Referrer-Policy': 'strict-origin-when-cross-origin'
+      }
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
