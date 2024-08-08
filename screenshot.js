@@ -1,4 +1,4 @@
-import https from "https";
+const https = require("https");
 
 export function createScreenshot(url) {
   return new Promise((resolve, reject) => {
