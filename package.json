@@ -9,6 +9,7 @@
   "author": "MILAN",
   "license": "MIT",
   "dependencies": {
+    "@google/generative-ai": "^0.16.0",
     "@gradio/client": "^1.4.0",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
