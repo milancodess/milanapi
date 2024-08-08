@@ -28,7 +28,6 @@ const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
 const { fileURLToPath } = require("url");
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const genAI = new GoogleGenerativeAI(process.env.AIzaSyBD3z1Hk3atVVLmHCqQiTejo_YJHUCkNs8);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 const prodia = new Prodia("fd8c21c4-a464-4e3e-a0cc-6d7cc4f32dd3");
