@@ -15,6 +15,7 @@ const createReadStream = require('fs-extra').createReadStream;
 const fetch = require("node-fetch");
 const Jimp = require("jimp");
 const jimp = require('jimp');
+const { PassThrough } = require("stream");
 const cheerio = require("cheerio");
 const { createScreenshot } = require("./screenshot.js");
 const request = require("request");
@@ -1515,7 +1516,6 @@ app.get('/imagine69', async (req, res) => {
   }
 });
 
-import { PassThrough } from "stream";
 const postUrl = 'https://linaqruf-animagine-xl.hf.space/queue/join?';
 const sseUrl = 'https://linaqruf-animagine-xl.hf.space/queue/data?session_hash=ai1n1ohrpln';
 
