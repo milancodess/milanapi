@@ -7,7 +7,6 @@ const stream = require('stream');
 const FormData = require('form-data');
 const qs = require("qs");
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const { Client } = require('@gradio/client');
 const useragent = require('express-useragent');
 const JavaScriptObfuscator = require('javascript-obfuscator');
 const unlinkSync = require('fs-extra').unlinkSync;
@@ -1516,96 +1515,6 @@ app.get('/imagine69', async (req, res) => {
   }
 });
 
-const postUrl = 'https://linaqruf-animagine-xl.hf.space/queue/join?';
-const sseUrl = 'https://linaqruf-animagine-xl.hf.space/queue/data?session_hash=ai1n1ohrpln';
-
-function getRandomSeed() {
-    return Math.floor(Math.random() * 2147483648);
-}
-
-const styles = ["(None)", "Anime", "Cinematic", "Photographic", "Manga", "Digital Art", "Pixel art", "Fantasy art", "Fantasy art", "Neonpunk", "3D Model"];
-
-const postOptions = (prompt, style) => ({
-    headers: {
-        'accept': '*/*',
-        'accept-language': 'en-US,en;q=0.9',
-        'content-type': 'application/json',
-        'sec-ch-ua': '"Chromium";v="107", "Not=A?Brand";v="24"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Android"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
-        'cookie': '_ga_R1FN4KJKJH=GS1.1.1722656254.1.0.1722656254.0.0.0; _ga=GA1.2.732731959.1722656255; _gid=GA1.2.641335593.1722656255',
-        'Referer': 'https://linaqruf-animagine-xl.hf.space/?',
-        'Referrer-Policy': 'strict-origin-when-cross-origin'
-    },
-    method: 'POST',
-    data: {
-        "data": [prompt, "", getRandomSeed(), 1024, 1024, 7, 50, "Euler a", "896 x 1152", style, "Standard", false, 0.55, 1.5, true],
-        "event_data": null,
-        "fn_index": 5,
-        "trigger_id": 7,
-        "session_hash": "ai1n1ohrpln"
-    }
-});
-
-const sseOptions = {
-    headers: {
-        'accept': 'text/event-stream',
-        'accept-language': 'en-US,en;q=0.9',
-        'cache-control': 'no-cache',
-        'sec-ch-ua': '"Chromium";v="107", "Not=A?Brand";v="24"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Android"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
-        'cookie': '_ga_R1FN4KJKJH=GS1.1.1722656254.1.0.1722656254.0.0.0; _ga=GA1.2.732731959.1722656255; _gid=GA1.2.641335593.1722656255',
-        'Referer': 'https://linaqruf-animagine-xl.hf.space/?',
-        'Referrer-Policy': 'strict-origin-when-cross-origin'
-    },
-    method: 'GET',
-    responseType: 'stream'
-};
-
-app.get('/niji', async (req, res) => {
-    const prompt = req.query.prompt || "Cat";
-    const model = parseInt(req.query.model) || 1;
-    const style = styles[model - 1] || styles[0];
-
-    try {
-        const postResponse = await axios(postUrl, postOptions(prompt, style));
-        const sseResponse = await axios(sseUrl, sseOptions);
-
-        const passThrough = new PassThrough();
-        sseResponse.data.pipe(passThrough);
-
-        passThrough.on('data', (chunk) => {
-            const lines = chunk.toString().split('\n');
-            for (let line of lines) {
-                if (line.startsWith('data:')) {
-                    const data = line.replace('data: ', '');
-                    const d = JSON.parse(data);
-                    if (d.msg === "process_completed") {
-                        res.json(d);
-                    }
-                }
-            }
-        });
-
-        passThrough.on('error', (err) => {
-            res.status(500).json({ error: err.message });
-        });
-
-        passThrough.on('end', () => {
-        });
-
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
 app.get('/tik', async (req, res) => {
   try {
     const url = req.query.url;
@@ -1666,27 +1575,6 @@ app.get('/tik', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
-});
-
-app.get('/imageai69', async (req, res) => {
-    // Use 'cat' as the default value for prompt if it's not provided
-    const prompt = req.body.prompt || 'cat';
-    
-    try {
-        const client = await Client.connect("black-forest-labs/FLUX.1-schnell");
-        const result = await client.predict("/infer", {
-            prompt, // Use the default or provided prompt
-            seed: 2147483647,
-            randomize_seed: true,
-            width: 1024,
-            height: 1024,
-            num_inference_steps: 4
-        });
-
-        res.json(result.data);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
 });
 
 app.get('/ytb', async (req, res) => {
