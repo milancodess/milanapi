@@ -6,6 +6,7 @@ import multer from 'multer';
 import stream from 'stream';
 import FormData from 'form-data';
 import qs from "qs";
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Client } from '@gradio/client';
 import useragent from 'express-useragent';
 import JavaScriptObfuscator from 'javascript-obfuscator';
@@ -28,6 +29,8 @@ import rateLimit from "express-rate-limit";
 import path from "path";
 import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const genAI = new GoogleGenerativeAI(process.env.AIzaSyBD3z1Hk3atVVLmHCqQiTejo_YJHUCkNs8);
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 const prodia = new Prodia("fd8c21c4-a464-4e3e-a0cc-6d7cc4f32dd3");
 const port = process.env.PORT || 5000;
 const app = express();
@@ -1882,6 +1885,43 @@ app.get('/executec', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+app.get('/gemini', async (req, res) => {
+  try {
+    const prompt = req.query.prompt;
+    const imageUrl = req.query.imageUrl;
+
+    if (!prompt) {
+      return res.status(400).send({ error: 'Prompt query parameter is required' });
+    }
+
+    let result;
+    if (imageUrl) {
+      const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+      const base64Image = Buffer.from(response.data, 'binary').toString('base64');
+
+      result = await model.generateContent([
+        prompt,
+        {
+          inlineData: {
+            data: base64Image,
+            mimeType: 'image/png'
+          }
+        }
+      ]);
+    } else {
+      result = await model.generateContent(prompt);
+    }
+
+    const generatedResponse = await result.response;
+    const text = await generatedResponse.text();
+
+    res.send({ generatedText: text });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Internal Server Error' });
   }
 });
 
