@@ -1,33 +1,33 @@
-import express from "express";
-import fileUpload from 'express-fileupload';
-import { Prodia } from "prodia.js";
-import bodyParser from 'body-parser';
-import multer from 'multer';
-import stream from 'stream';
-import FormData from 'form-data';
-import qs from "qs";
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Client } from '@gradio/client';
-import useragent from 'express-useragent';
-import JavaScriptObfuscator from 'javascript-obfuscator';
-import unlinkSync from 'fs-extra';
-import createReadStream from 'fs-extra';
-import fetch from "node-fetch";
-import Jimp from "jimp";
-import jimp from 'jimp';
-import cheerio from "cheerio";
-import { createScreenshot } from "./screenshot.js";
-import request from "request";
-import stringSimilarity from "string-similarity";
-import superagent from 'superagent';
-import fs from "fs";
-import axios from "axios";
-import ytdl from 'ytdl-core';
-import ytSearch from 'yt-search';
-import cors from "cors";
-import rateLimit from "express-rate-limit";
-import path from "path";
-import { fileURLToPath } from "url";
+const express = require("express");
+const fileUpload = require('express-fileupload');
+const { Prodia } = require("prodia.js");
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const stream = require('stream');
+const FormData = require('form-data');
+const qs = require("qs");
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { Client } = require('@gradio/client');
+const useragent = require('express-useragent');
+const JavaScriptObfuscator = require('javascript-obfuscator');
+const unlinkSync = require('fs-extra').unlinkSync;
+const createReadStream = require('fs-extra').createReadStream;
+const fetch = require("node-fetch");
+const Jimp = require("jimp");
+const jimp = require('jimp');
+const cheerio = require("cheerio");
+const { createScreenshot } = require("./screenshot.js");
+const request = require("request");
+const stringSimilarity = require("string-similarity");
+const superagent = require('superagent');
+const fs = require("fs");
+const axios = require("axios");
+const ytdl = require('ytdl-core');
+const ytSearch = require('yt-search');
+const cors = require("cors");
+const rateLimit = require("express-rate-limit");
+const path = require("path");
+const { fileURLToPath } = require("url");
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const genAI = new GoogleGenerativeAI(process.env.AIzaSyBD3z1Hk3atVVLmHCqQiTejo_YJHUCkNs8);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
@@ -440,40 +440,6 @@ app.get("/shit", (req, res) => {
   });
 });
 
- 
-app.get('/animeplanet', async (req, res) => {
-  try {
-    const query = req.query.name;
-    if (!query) {
-      return res.json({
-        status: false,
-        creator: `MILAN`,
-        message: 'put valid parameter for name'
-      });
-    }
-    const {
-      data
-    } = await axios.get(`https://www.anime-planet.com/anime/all?name=${query}`);
-    let results = []
-    const $ = cheerio.load(data)
-    $('#siteContainer > ul.cardDeck.cardGrid > li ').each(function (a, b) {
-      const result = {
-        status: 200,
-        creator: creator,
-        title: $(b).find('> a > h3').text(),
-        link: 'https://www.anime-planet.com' + $(b).find('> a').attr('href'),
-        thumbnail: 'https://www.anime-planet.com' + $(b).find('> a > div.crop > img').attr('src')
-      };
-      results.push(result);
-    });
-
-    res.json(results);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
 app.get("/itunes", async (req, res) => {
   try {
     const query = req.query.query;
@@ -487,7 +453,7 @@ app.get("/itunes", async (req, res) => {
       }
     });
     const { results } = data;
-    if (!results.length) {
+    if (!reults.length) {
       return res.status(404).json({ error: 'Could not find any results.' });
     }
     const [result] = results.map((r) => ({
@@ -514,7 +480,7 @@ app.get('/encrypt', (req, res) => {
     res.status(400).json({ error: 'Please enter a code.' });
     return;
   }
-
+	
   const obfuscatedCode = JavaScriptObfuscator.obfuscate(code, {
     compact: true,
     controlFlowFlattening: true,
@@ -536,72 +502,6 @@ app.get('/encrypt', (req, res) => {
   };
 
   res.json(response);
-});
-
-app.get('/lyrics', async (req, res) => {
-  try {
-    const lyrics = req.query.query;
-    if (!lyrics) {
-      return res.status(400).send("Please provide a song name!");
-    }
-    const response = await axios.get(`https://lyrist.vercel.app/api/${encodeURIComponent(lyrics)}`);
-    const messageData = {
-      title: response.data.title,
-      artist: response.data.artist,
-      lyrics: response.data.lyrics,
-      image: response.data.image
-    };
-    return res.status(200).send(messageData);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send("An error occurred while fetching lyrics!");
-  }
-});
-
-const GENIUS_ACCESS_TOKEN = 'ohCXKqz-spvgUf4Rq1lGNdJM-Lp2--eetb0VaR5WzROO4rxKFMMVHzTyN0Fsr64u';
-
-app.get('/lyrics2', async (req, res) => {
-  try {
-    const songname = req.query.songname;
-    if (!songname) {
-      return res.status(400).send("Please provide a song name!");
-    }
-
-    const searchUrl = `https://api.genius.com/search?${qs.stringify({ q: songname })}`;
-    const searchResponse = await axios.get(searchUrl, {
-      headers: {
-        Authorization: `Bearer ${GENIUS_ACCESS_TOKEN}`
-      }
-    });
-    const searchResults = searchResponse.data.response.hits;
-
-    if (searchResults.length === 0) {
-      return res.status(404).send("No results found for the given song!");
-    }
-
-    const results = [];
-
-    for (let i = 0; i < 6; i++) {
-      const randomIndex = Math.floor(Math.random() * searchResults.length);
-      const song = searchResults[randomIndex].result;
-      const lyricsApiUrl = `https://lyrist.vercel.app/api/${encodeURIComponent(song.title)}%20${encodeURIComponent(song.primary_artist.name)}`;
-      const lyricsResponse = await axios.get(lyricsApiUrl);
-      const lyrics = lyricsResponse.data.lyrics || "Lyrics not found for this song.";
-
-      const messageData = {
-        title: song.title,
-        artist: song.primary_artist.name,
-        lyrics: lyrics,
-        image: song.song_art_image_url
-      };
-      results.push(messageData);
-    }
-
-    return res.status(200).send(results);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send("An error occurred while fetching lyrics!");
-  }
 });
 
 app.get('/iginfo', async (req, res) => {
