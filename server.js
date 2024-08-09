@@ -21,6 +21,7 @@ const request = require("request");
 const stringSimilarity = require("string-similarity");
 const superagent = require('superagent');
 const fs = require("fs");
+const { v4: uuidv4 } = require('uuid');
 const axios = require("axios");
 const ytdl = require('ytdl-core');
 const ytSearch = require('yt-search');
