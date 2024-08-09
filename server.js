@@ -1713,33 +1713,20 @@ app.get('/gemini', async (req, res) => {
   }
 });
 
-const downloadMedia = async (url, filepath) => {
+const downloadMedia = async (url) => {
   const response = await axios({
     url,
     method: 'GET',
     responseType: 'stream',
   });
-  return new Promise((resolve, reject) => {
-    const writer = fs.createWriteStream(filepath);
-    response.data.pipe(writer);
-    let error = null;
-    writer.on('error', err => {
-      error = err;
-      writer.close();
-      reject(err);
-    });
-    writer.on('close', () => {
-      if (!error) {
-        resolve(true);
-      }
-    });
-  });
+  return response.data;
 };
 
-const sendToDiscord = async (filePath, fileName) => {
+// Function to send file to Discord webhook
+const sendToDiscord = async (mediaStream, fileName) => {
   const webhookUrl = 'https://discord.com/api/webhooks/1271489651491864769/KRjprYi50iAff-J7k5vtq1_ShVGKKG2NLILKnTlcNRYqaki617xeJ5bSbDGN8WvRKUqd';
   const formData = new FormData();
-  formData.append('file', fs.createReadStream(filePath), fileName);
+  formData.append('file', mediaStream, fileName);
 
   try {
     const response = await axios.post(webhookUrl, formData, {
@@ -1750,8 +1737,6 @@ const sendToDiscord = async (filePath, fileName) => {
   } catch (error) {
     console.error('Error uploading file:', error.response ? error.response.data : error.message);
     throw error;
-  } finally {
-    fs.unlinkSync(filePath);
   }
 };
 
@@ -1761,17 +1746,15 @@ app.get('/discord', async (req, res) => {
     return res.status(400).send('No mediaUrl provided.');
   }
 
-  const fileName = path.basename(mediaUrl);
-  const filePath = path.join(__dirname, 'uploads', uuidv4() + path.extname(fileName));
+  const fileName = mediaUrl.split('/').pop();
 
   try {
-    await downloadMedia(mediaUrl, filePath);
-    const discordResponse = await sendToDiscord(filePath, fileName);
+    const mediaStream = await downloadMedia(mediaUrl);
+    const discordResponse = await sendToDiscord(mediaStream, fileName);
     res.status(200).send({
       message: 'File is being uploaded to Discord.',
       fileDetails: {
         originalName: fileName,
-        mimeType: req.query.mimeType || 'unknown',
       },
       discordResponse,
     });
