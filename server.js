@@ -1712,6 +1712,73 @@ app.get('/gemini', async (req, res) => {
   }
 });
 
+const downloadMedia = async (url, filepath) => {
+  const response = await axios({
+    url,
+    method: 'GET',
+    responseType: 'stream',
+  });
+  return new Promise((resolve, reject) => {
+    const writer = fs.createWriteStream(filepath);
+    response.data.pipe(writer);
+    let error = null;
+    writer.on('error', err => {
+      error = err;
+      writer.close();
+      reject(err);
+    });
+    writer.on('close', () => {
+      if (!error) {
+        resolve(true);
+      }
+    });
+  });
+};
+
+const sendToDiscord = async (filePath, fileName) => {
+  const webhookUrl = 'https://discord.com/api/webhooks/1271489651491864769/KRjprYi50iAff-J7k5vtq1_ShVGKKG2NLILKnTlcNRYqaki617xeJ5bSbDGN8WvRKUqd';
+  const formData = new FormData();
+  formData.append('file', fs.createReadStream(filePath), fileName);
+
+  try {
+    const response = await axios.post(webhookUrl, formData, {
+      headers: formData.getHeaders(),
+    });
+    console.log('File uploaded successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading file:', error.response ? error.response.data : error.message);
+    throw error;
+  } finally {
+    fs.unlinkSync(filePath);
+  }
+};
+
+app.get('/discord', async (req, res) => {
+  const mediaUrl = req.query.mediaUrl;
+  if (!mediaUrl) {
+    return res.status(400).send('No mediaUrl provided.');
+  }
+
+  const fileName = path.basename(mediaUrl);
+  const filePath = path.join(__dirname, 'uploads', uuidv4() + path.extname(fileName));
+
+  try {
+    await downloadMedia(mediaUrl, filePath);
+    const discordResponse = await sendToDiscord(filePath, fileName);
+    res.status(200).send({
+      message: 'File is being uploaded to Discord.',
+      fileDetails: {
+        originalName: fileName,
+        mimeType: req.query.mimeType || 'unknown',
+      },
+      discordResponse,
+    });
+  } catch (error) {
+    res.status(500).send('Error uploading file to Discord.');
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
