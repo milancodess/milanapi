@@ -14,6 +14,7 @@ const createReadStream = require('fs-extra').createReadStream;
 const fetch = require("node-fetch");
 const Jimp = require("jimp");
 const jimp = require('jimp');
+const crypto = require('crypto');
 const { PassThrough } = require("stream");
 const cheerio = require("cheerio");
 const { createScreenshot } = require("./screenshot.js");
@@ -1869,6 +1870,12 @@ app.get('/upload69', async (req, res) => {
   }
 });
 
+const githubUrlAPI = 'https://api.github.com/repos/milan2nd/upload69/contents/';
+
+function generateRandomString(length) {
+    return crypto.randomBytes(length).toString('hex').slice(0, length);
+}
+
 app.get('/sharecode', async (req, res) => {
     const { sharecodes, filename } = req.query;
 
@@ -1877,11 +1884,10 @@ app.get('/sharecode', async (req, res) => {
     }
 
     try {
-        const now = new Date().toISOString().replace(/[:.]/g, '-');
-        const fileName = filename ? `${filename}.txt` : `File-${now}.txt`;
+        const fileName = filename ? `${filename}` : `${generateRandomString(16)}`;
         const base64Content = Buffer.from(sharecodes).toString('base64');
 
-        const githubUrl = githubAPIurl + `sharecodes/${fileName}`;
+        const githubUrl = githubUrlAPI + `sharecodes/${fileName}`;
 
         await axios.put(githubUrl, JSON.stringify({
             message: 'Upload text file',
@@ -1893,8 +1899,8 @@ app.get('/sharecode', async (req, res) => {
             }
         });
 
-        const rawUrl = `https://www.milanb.com.np/sharecodes/${fileName}`;
-        res.json({ rawUrl });
+        const url = `https://www.milanb.com.np/sharecodes/${fileName}`;
+        res.json({ url });
 
     } catch (error) {
         console.error('Error uploading text file:', error);
