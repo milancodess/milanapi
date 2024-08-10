@@ -29,6 +29,7 @@ const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
 const { fileURLToPath } = require("url");
+const { URL } = require('url');
 const genAI = new GoogleGenerativeAI(process.env.AIzaSyBD3z1Hk3atVVLmHCqQiTejo_YJHUCkNs8);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 const prodia = new Prodia("fd8c21c4-a464-4e3e-a0cc-6d7cc4f32dd3");
@@ -1805,6 +1806,66 @@ app.get('/usertik', async (req, res) => {
   } catch (error) {
     console.error('Error fetching TikTok user posts:', error);
     res.status(500).send('Internal Server Error');
+  }
+});
+
+const githubAPIurl = 'https://api.github.com/repos/milan2nd/upload69/contents/cacheImages/';
+const githubToken = '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';
+
+const CUSTOM_DOMAIN_URL = 'https://www.milanb.com.np/cacheImages/';
+
+app.use(express.json());
+
+const downloadImage = async (imageUrl) => {
+  try {
+    const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+    return response.data;
+  } catch (error) {
+    console.error(`Error downloading image from URL: ${imageUrl}`);
+    console.error(error);
+    throw new Error('Failed to download image.');
+  }
+};
+
+const generateFilename = (originalName) => {
+  const dateNow = new Date().toISOString().replace(/[:.]/g, '-');
+  const fileExtension = path.extname(originalName);
+  const baseName = path.basename(originalName, fileExtension);
+  return `${baseName}-${dateNow}${fileExtension}`;
+};
+
+app.get('/upload69', async (req, res) => {
+  const { imageUrl } = req.query;
+
+  if (!imageUrl) {
+    return res.status(400).send('Image URL is required.');
+  }
+
+  try {
+    const imageBuffer = await downloadImage(imageUrl);
+    const fileName = generateFilename(path.basename(new URL(imageUrl).pathname));
+
+    const base64Image = imageBuffer.toString('base64');
+
+    const data = {
+      message: `Upload ${fileName}`,
+      content: base64Image,
+    };
+
+    const uploadUrl = `${githubAPIurl}${fileName}`;
+    await axios.put(uploadUrl, data, {
+      headers: {
+        Authorization: `token ${githubToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const rawUrl = `${CUSTOM_DOMAIN_URL}${fileName}`;
+    res.json({ url: rawUrl });
+  } catch (error) {
+    console.error(`Error uploading image to GitHub. URL: ${imageUrl}`);
+    console.error(error);
+    res.status(500).send('Error downloading or uploading image.');
   }
 });
 	    
