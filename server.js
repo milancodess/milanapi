@@ -1872,6 +1872,8 @@ app.get('/upload69', async (req, res) => {
 
 const githubUrlAPI = 'https://api.github.com/repos/milan2nd/upload69/contents/';
 
+const CUSTOM_DOMAIN = 'www.milanb.com.np';
+
 function generateRandomString(length) {
     return crypto.randomBytes(length).toString('hex').slice(0, length);
 }
@@ -1899,10 +1901,8 @@ app.get('/sharecode', async (req, res) => {
             }
         });
 
-        await new Promise(resolve => setTimeout(resolve, 6000));
-
-        const url = `https://www.milanb.com.np/sharecodes/${fileName}`;
-        res.json({ url });
+        const rawUrl = `https://${CUSTOM_DOMAIN}/sharecodes/${fileName}`;
+        res.json({ rawUrl });
 
     } catch (error) {
         console.error('Error uploading text file:', error);
