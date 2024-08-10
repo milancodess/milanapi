@@ -92,7 +92,6 @@ async function geminiText({ prompt, model, event, message, api }) {
   if (!gemini[event.senderID] || !Array.isArray(gemini[event.senderID])) {
     gemini[event.senderID] = [];
   }
-  const ready = await message.reply("Gemini Is Cooking");
   let chatBlock = [...gemini[event.senderID]];
 
   const systemPrompt = "You are a helpful and knowledgeable assistant. Please respond concisely and politely.";
@@ -135,7 +134,6 @@ async function vision({ prompt, model, event, message, api }) {
   if (!gemini[event.senderID] || !Array.isArray(gemini[event.senderID])) {
     gemini[event.senderID] = [];
   }
-  const ready = await message.reply("Gemini is Analyzing your Image");
 
   const systemPrompt = "You are an expert image analyzer. Provide detailed and insightful analysis based on the given image and prompt.";
 
