@@ -1884,7 +1884,7 @@ app.get('/sharecode', async (req, res) => {
     }
 
     try {
-        const fileName = filename ? `${filename}` : `${generateRandomString(16)}`;
+        const fileName = filename ? filename : generateRandomString(16);
         const base64Content = Buffer.from(sharecodes).toString('base64');
 
         const githubUrl = githubUrlAPI + `sharecodes/${fileName}`;
@@ -1898,6 +1898,8 @@ app.get('/sharecode', async (req, res) => {
                 'Content-Type': 'application/json'
             }
         });
+
+        await new Promise(resolve => setTimeout(resolve, 6000));
 
         const url = `https://www.milanb.com.np/sharecodes/${fileName}`;
         res.json({ url });
