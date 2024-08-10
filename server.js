@@ -1795,7 +1795,13 @@ app.get('/usertik', async (req, res) => {
       }
     });
 
-    res.json(response.data);
+    const data = response.data.data.videos.map(video => ({
+      title: video.title,
+      cover: `https://tikwm.com${video.cover}`,
+      wmplay: `https://tikwm.com${video.wmplay}`
+    }));
+
+    res.json(data);
   } catch (error) {
     console.error('Error fetching TikTok user posts:', error);
     res.status(500).send('Internal Server Error');
