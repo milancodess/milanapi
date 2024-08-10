@@ -1886,7 +1886,7 @@ app.get('/sharecode', async (req, res) => {
     }
 
     try {
-        const fileName = filename ? filename : generateRandomString(16);
+        const fileName = filename ? `${filename}.txt` : `${generateRandomString(16)}.txt`;
         const base64Content = Buffer.from(sharecodes).toString('base64');
 
         const githubUrl = githubUrlAPI + `sharecodes/${fileName}`;
@@ -1901,14 +1901,15 @@ app.get('/sharecode', async (req, res) => {
             }
         });
 
-        const rawUrl = `https://${CUSTOM_DOMAIN}/sharecodes/${fileName}`;
-        res.json({ rawUrl });
+        const url = `https://${CUSTOM_DOMAIN}/sharecodes/${fileName}`;
+        res.json({ url });
 
     } catch (error) {
         console.error('Error uploading text file:', error);
         res.status(500).send('Error uploading text file.');
     }
 });
+
 	    
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
