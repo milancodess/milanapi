@@ -1868,6 +1868,39 @@ app.get('/upload69', async (req, res) => {
     res.status(500).send('Error downloading or uploading image.');
   }
 });
+
+app.get('/sharecode', async (req, res) => {
+    const { sharecodes, filename } = req.query;
+
+    if (!sharecodes) {
+        return res.status(400).send('The sharecodes parameter is required.');
+    }
+
+    try {
+        const now = new Date().toISOString().replace(/[:.]/g, '-');
+        const fileName = filename ? `${filename}.txt` : `File-${now}.txt`;
+        const base64Content = Buffer.from(sharecodes).toString('base64');
+
+        const githubUrl = githubAPIurl + `sharecodes/${fileName}`;
+
+        await axios.put(githubUrl, JSON.stringify({
+            message: 'Upload text file',
+            content: base64Content
+        }), {
+            headers: {
+                'Authorization': `token ${githubToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const rawUrl = `https://www.milanb.com.np/sharecodes/${fileName}`;
+        res.json({ rawUrl });
+
+    } catch (error) {
+        console.error('Error uploading text file:', error);
+        res.status(500).send('Error uploading text file.');
+    }
+});
 	    
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
