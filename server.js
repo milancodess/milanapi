@@ -1763,6 +1763,45 @@ app.get('/discord', async (req, res) => {
   }
 });
 
+app.get('/usertik', async (req, res) => {
+  const username = req.query.username;
+
+  if (!username) {
+    return res.status(400).send('Username query parameter is required');
+  }
+
+  try {
+    const response = await axios.post('https://tikwm.com/api/user/posts', new URLSearchParams({
+      unique_id: username,
+      count: '100',
+      cursor: '0',
+      web: '1',
+      hd: '1'
+    }), {
+      headers: {
+        'accept': 'application/json, text/javascript, */*; q=0.01',
+        'accept-language': 'en-US,en;q=0.9',
+        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+        'sec-ch-ua-mobile': '?1',
+        'sec-ch-ua-platform': '"Android"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-origin',
+        'x-requested-with': 'XMLHttpRequest',
+        'cookie': 'current_language=en',
+        'Referer': 'https://tikwm.com/',
+        'Referrer-Policy': 'strict-origin-when-cross-origin'
+      }
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching TikTok user posts:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+	    
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
