@@ -1811,7 +1811,7 @@ app.get('/usertik', async (req, res) => {
 });
 
 const githubAPIurl = 'https://api.github.com/repos/milan2nd/upload69/contents/cacheImages/';
-const githubToken = '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';
+const githubToken = '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';
 
 const CUSTOM_DOMAIN_URL = 'https://www.milanb.com.np/cacheImages/';
 
