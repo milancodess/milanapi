@@ -1938,6 +1938,29 @@ app.get('/igstory', async (req, res) => {
     }
 });
 
+app.get('/flux', async (req, res) => {
+  const inputs = req.query.inputs;
+
+  try {
+    const response = await axios.post(
+      "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
+      { inputs: inputs },
+      {
+        headers: {
+          "Authorization": "Bearer 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",
+          "Content-Type": "application/json"
+        },
+        responseType: 'stream'
+      }
+    );
+
+    res.setHeader('Content-Type', 'image/png');
+    response.data.pipe(res);
+  } catch (error) {
+    console.error('Error querying model:', error);
+    res.status(500).json({ error: 'Failed to query model' });
+  }
+});
 
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
