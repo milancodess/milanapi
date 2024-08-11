@@ -1939,8 +1939,18 @@ app.get('/igstory', async (req, res) => {
 });
 
 const models = [
-  "https://api-inference.huggingface.co/models/alvdansen/frosting_lane_flux",
+  "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
   "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+  "https://api-inference.huggingface.co/models/alvdansen/frosting_lane_flux",
+  "https://api-inference.huggingface.co/models/VideoAditor/Flux-Lora-Realism",
+  "https://api-inference.huggingface.co/models/digiplay/AbsoluteReality_v1.8.1",
+  "https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.1",
+  "https://api-inference.huggingface.co/models/WizWhite/wizard-s-vintage-board-games",
+  "https://api-inference.huggingface.co/models/alvdansen/BandW-Manga",
+  "https://api-inference.huggingface.co/models/alvdansen/frosting_lane_redux",
+  "https://api-inference.huggingface.co/models/alvdansen/archfey_anime",
+  "https://api-inference.huggingface.co/models/alvdansen/m3lt",
+  "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2",
   "https://api-inference.huggingface.co/models/alvdansen/phantasma-anime",
   "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
   "https://api-inference.huggingface.co/models/alvdansen/midsommarcartoon"
