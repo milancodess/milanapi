@@ -1910,7 +1910,35 @@ app.get('/sharecode', async (req, res) => {
     }
 });
 
-	    
+app.get('/igstory', async (req, res) => {
+    const username = req.query.username;
+    if (!username) {
+        return res.status(400).json({ error: 'Username is required' });
+    }
+
+    try {
+        const response = await axios.get(`https://api-ig.storiesig.info/api/story?url=https://www.instagram.com/stories/${username}/`, {
+            headers: {
+                "accept": "application/json, text/plain, */*",
+                "accept-language": "en-US,en;q=0.9",
+                "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+                "sec-ch-ua-mobile": "?1",
+                "sec-ch-ua-platform": "\"Android\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-site",
+                "Referer": "https://storiesig.info/",
+                "Referrer-Policy": "strict-origin-when-cross-origin"
+            }
+        });
+
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch story' });
+    }
+});
+
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
