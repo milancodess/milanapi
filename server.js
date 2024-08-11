@@ -1938,12 +1938,24 @@ app.get('/igstory', async (req, res) => {
     }
 });
 
+const models = [
+  "https://api-inference.huggingface.co/models/alvdansen/frosting_lane_flux",
+  "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+  "https://api-inference.huggingface.co/models/alvdansen/phantasma-anime",
+  "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
+  "https://api-inference.huggingface.co/models/alvdansen/midsommarcartoon"
+];
+
 app.get('/flux', async (req, res) => {
   const inputs = req.query.inputs;
+  const modelQuery = req.query.model;
+  const modelIndex = parseInt(modelQuery, 10);
+
+  const modelUrl = models[!isNaN(modelIndex) && modelIndex >= 0 && modelIndex < models.length ? modelIndex : 0];
 
   try {
     const response = await axios.post(
-      "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
+      modelUrl,
       { inputs: inputs },
       {
         headers: {
