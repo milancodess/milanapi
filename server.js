@@ -1953,7 +1953,8 @@ const models = [
   "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2",
   "https://api-inference.huggingface.co/models/alvdansen/phantasma-anime",
   "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
-  "https://api-inference.huggingface.co/models/alvdansen/midsommarcartoon"
+  "https://api-inference.huggingface.co/models/alvdansen/midsommarcartoon",
+  "https://api-inference.huggingface.co/models/hakurei/waifu-diffusion"
 ];
 
 app.get('/flux', async (req, res) => {
