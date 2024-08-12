@@ -1985,6 +1985,42 @@ app.get('/flux', async (req, res) => {
   }
 });
 
+app.get('/milanbhandari', async (req, res) => {
+  try {
+    const { data } = await axios.get('https://www.milan-bhandari.com.np/');
+    const $ = cheerio.load(data);
+
+    const blogs = [];
+
+    $('article.blog[data-page="blog"] .blog-posts-list .blog-post-item').each((index, element) => {
+      const title = $(element).find('header h2.article-title').text().trim();
+      const url = $(element).find('a').attr('href');
+      const imgSrc = $(element).find('figure.blog-banner-box img').attr('src');
+      const category = $(element).find('.blog-meta .blog-category').text().trim();
+      const time = $(element).find('.blog-meta time').text().trim();
+      const itemTitle = $(element).find('h3.blog-item-title').text().trim();
+      const blogText = $(element).find('.blog-text').text().trim();
+
+      blogs.push({
+        index,
+        title,
+        url,
+        imgSrc,
+        category,
+        time,
+        itemTitle,
+        blogText,
+      });
+    });
+
+    res.json(blogs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while scraping the website.');
+  }
+});
+
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
