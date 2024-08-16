@@ -2007,52 +2007,6 @@ app.get('/milanbhandari', async (req, res) => {
   }
 });
 
-app.get('/tensor', async (req, res) => {
-  const { prompt } = req.query;
-
-  if (!prompt) {
-    return res.status(400).json({ error: 'The "prompt" parameter is required.' });
-  }
-
-  try {
-    const response = await axios({
-      method: 'post',
-      url: 'https://us-west1-tensor-alchemy.cloudfunctions.net/generate_image_using_api',
-      headers: {
-        'accept': '*/*',
-        'accept-language': 'en-US,en;q=0.9',
-        'content-type': 'application/json',
-        'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
-        'sec-ch-ua-mobile': '?1',
-        'sec-ch-ua-platform': '"Android"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'cross-site',
-        'Referer': 'https://tensoralchemy.ai/',
-        'Referrer-Policy': 'strict-origin-when-cross-origin'
-      },
-      data: {
-        data: {
-          prompt: prompt,
-          seed: -1,
-          negative_prompt: null,
-          height: 1024,
-          width: 1024,
-          guidance_scale: 7.5,
-          steps: 30,
-          num_images_per_prompt: 1,
-          api_key: 'nhF8nhiuU3Qz7e9fRXPK'
-        }
-      }
-    });
-
-    res.status(200).json(response.data);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'An error occurred while generating the image.' });
-  }
-});
-
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
