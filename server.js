@@ -2007,6 +2007,57 @@ app.get('/milanbhandari', async (req, res) => {
   }
 });
 
+app.get('/ai2', (req, res) => {
+try {
+    const query = req.query.query;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter is required.' });
+    }
+
+    const apiUrl = 'https://api.deepinfra.com/v1/openai/chat/completions';
+    const headers = {
+    'accept': 'text/event-stream',
+       'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+       'content-type': 'application/json',
+       'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120"',
+       'sec-ch-ua-mobile': '?1',
+       'sec-ch-ua-platform': '"Android"',
+       'sec-fetch-dest': 'empty',
+       'sec-fetch-mode': 'cors',
+       'sec-fetch-site': 'same-site',
+       'x-deepinfra-source': 'web-embed',
+       'Referer': 'https://deepinfra.com/',
+       'Referrer-Policy': 'strict-origin-when-cross-origin',
+  };
+
+    const requestData = {
+      model: 'meta-llama/Meta-Llama-3.1-70B-Instruct',
+      messages: [
+  {
+    role: 'system',
+    content: 'Be a helpful assistant'
+  },
+  { 
+    role: 'user', 
+    content: query 
+  },
+      ],
+      stream: false,
+    };
+
+axios.post(apiUrl, requestData, { headers })
+      .then(response => {
+        res.json(response.data);
+      })
+      .catch(error => {
+        res.status(500).json({ error: error.message });
+      });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
