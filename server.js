@@ -1505,68 +1505,6 @@ app.get('/imagine69', async (req, res) => {
   }
 });
 
-app.get('/tik', async (req, res) => {
-  try {
-    const url = req.query.url;
-    if (!url) {
-      return res.json("Enter url parameter:");
-    }
-
-    const bodyContent = 
-      `------WebKitFormBoundaryFyTeArAjKAhK8ziF\r\n` +
-      `Content-Disposition: form-data; name="url"\r\n\r\n` +
-      `${url}/\r\n` +
-      `------WebKitFormBoundaryFyTeArAjKAhK8ziF--\r\n`;
-
-    const response = await fetch("https://snaptik.gg/check/", {
-      method: "POST",
-      headers: {
-        "accept": "*/*",
-        "accept-language": "en-US,en;q=0.9",
-        "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryFyTeArAjKAhK8ziF",
-        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
-        "sec-ch-ua-mobile": "?1",
-        "sec-ch-ua-platform": "\"Android\"",
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
-        "Referer": "https://snaptik.gg/",
-        "Referrer-Policy": "strict-origin-when-cross-origin"
-      },
-      body: bodyContent
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch data');
-    }
-
-    const data = await response.json();
-
-    if (data.html) {
-      const $ = cheerio.load(data.html);
-      const downloadUrl = $('.down-right a').attr('href');
-      const thumbnail = $('#thumbnail').attr('src');
-      const fullName = $('.user-fullname').text();
-      const username = $('.user-username').text();
-
-      if (downloadUrl && thumbnail && fullName && username) {
-        res.json({
-          downloadUrl,
-          thumbnail,
-          fullName,
-          username
-        });
-      } else {
-        res.status(404).json({ error: 'Required data not found' });
-      }
-    } else {
-      res.status(500).json({ error: 'Invalid response' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
 app.get('/ytb', async (req, res) => {
     const query = req.query.q;
     if (!query) {
