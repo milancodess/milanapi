@@ -426,11 +426,11 @@ app.get('/mark', async (req, res) => {
 });    
   
 app.get("/shit", (req, res) => {
-  const uid = req.query.uid;
-  if (!uid) {
-    return res.json({ message: 'Enter the UID parameter' });
+  const url = req.query.url;
+  if (!url) {
+    return res.json({ message: 'Enter the URL parameter' });
   }
-  const profilePicUrl = `https://graph.facebook.com/${uid}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
+  const profilePicUrl = `${url}`;
   canvacord.Canvas.shit(profilePicUrl)
   .then(triggerd => {
     res.set({ "Content-Type": "image/gif" });
