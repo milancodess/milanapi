@@ -1996,6 +1996,161 @@ axios.post(apiUrl, requestData, { headers })
   }
 });
 
+const baseUrl = 'https://asurascanslation.com/?s=';
+
+app.get('/manga', async (req, res) => {
+    const query = req.query.query;
+
+    if (!query) {
+        return res.status(400).json({ error: 'Query parameter is required' });
+    }
+
+    try {
+        const { data } = await axios.get(`${baseUrl}${encodeURIComponent(query)}`);
+        const $ = cheerio.load(data);
+
+        const results = [];
+
+        $('div.bs').each((i, element) => {
+            const link = $(element).find('a').attr('href');
+            const title = $(element).find('a').attr('title');
+            const imageUrl = $(element).find('img').attr('src');
+            const episodes = $(element).find('div.epxs').text().trim();
+
+            results.push({
+                title,
+                link,
+                imageUrl,
+                episodes 
+            });
+        });
+
+        res.json(results);
+    } catch (error) {
+        res.status(500).json({ error: 'Error scraping the website' });
+    }
+});
+
+app.get('/details', async (req, res) => {
+    const url = req.query.url;
+
+    if (!url) {
+        return res.status(400).json({ error: 'URL parameter is required' });
+    }
+
+    try {
+        const { data } = await axios.get(url);
+        const $ = cheerio.load(data);
+
+        const details = {};
+
+        $('.tsinfo.bixbox .imptdt').each((i, element) => {
+            const text = $(element).text().trim();
+            const keyMatch = text.match(/^(.+?)\s*\/\/\s*there\s*should\s*be\s*=.*$/);
+            const valueMatch = text.match(/\/\/\s*there\s*should\s*be\s*=\s*(.*)$/);
+
+            if (keyMatch && valueMatch) {
+                const key = keyMatch[1].trim();
+                const value = valueMatch[1].trim();
+                details[key] = value;
+            }
+        });
+
+        details.title = $('.info-desc .entry-title').text().trim();
+        details.genres = $('.wd-full .mgen a').map((i, el) => $(el).text().trim()).get();
+        details.description = $('.entry-content.entry-content-single p').text().trim();
+        
+        const chapters = [];
+        $('#chapterlist li').each((i, element) => {
+            const chapterNum = $(element).attr('data-num');
+            const chapterLink = $(element).find('a').attr('href');
+            const chapterTitle = $(element).find('.chapternum').text().trim();
+            const chapterDate = $(element).find('.chapterdate').text().trim();
+
+            chapters.push({
+                chapterNum: parseInt(chapterNum, 10), // Convert chapter number to integer
+                chapterLink,
+                chapterTitle,
+                chapterDate
+            });
+        });
+
+        details.chapters = chapters.sort((a, b) => a.chapterNum - b.chapterNum);
+
+        res.json(details);
+    } catch (error) {
+        res.status(500).json({ error: 'Error scraping the details page' });
+    }
+});
+
+const decodeUrl = (url) => url.replace(/\\\//g, '/');
+
+const generateAllImageUrls = (baseUrl, highestNumber) => {
+    const urls = [];
+    for (let i = highestNumber; i >= 1; i--) {
+        urls.push(`${baseUrl}${i}.webp`);
+    }
+    return urls;
+};
+
+const extractImageUrlsAndBaseUrl = (scriptContent) => {
+    const imageUrls = [];
+    let baseUrl = '';
+    const imageRegex = /"images":\[\s*(?:(?:["'](.*?)["']\s*,\s*)*["'](.*?)["']\s*)?\]/g;
+    let match;
+
+    while ((match = imageRegex.exec(scriptContent)) !== null) {
+        if (match[1]) imageUrls.push(decodeUrl(match[1]));
+        if (match[2]) imageUrls.push(decodeUrl(match[2]));
+    }
+
+    if (imageUrls.length > 0) {
+        baseUrl = imageUrls[0].split('/').slice(0, -1).join('/') + '/';
+    }
+
+    return { imageUrls, baseUrl };
+};
+
+app.get('/chapter', async (req, res) => {
+    const url = req.query.url;
+
+    if (!url) {
+        return res.status(400).json({ error: 'URL parameter is required' });
+    }
+
+    try {
+        const { data } = await axios.get(url);
+        const $ = cheerio.load(data);
+
+        const scriptContent = $('script').filter(function() {
+            return $(this).html().includes('ts_reader.run');
+        }).html();
+
+        if (!scriptContent) {
+            return res.status(404).json({ error: 'ts_reader.run script not found' });
+        }
+        
+        const { imageUrls, baseUrl } = extractImageUrlsAndBaseUrl(scriptContent);
+
+        if (imageUrls.length === 0) {
+            return res.status(404).json({ error: 'No images found in the chapter' });
+        }
+
+        const highestNumber = Math.max(...imageUrls.map(url => {
+            const match = url.match(/(\d+)\.webp$/);
+            return match ? parseInt(match[1], 10) : 0;
+        }));
+
+        const allImageUrls = generateAllImageUrls(baseUrl, highestNumber);
+
+        res.json({
+            images: allImageUrls
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Error scraping the chapter page' });
+    }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
