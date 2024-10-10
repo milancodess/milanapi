@@ -2229,45 +2229,57 @@ app.get('/sb', async (req, res) => {
 
         const $ = cheerio.load(html);
 
-        const name = $('.text-2xl.font-bold').first().text().trim();
-        const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim();
+        const name = $('.text-2xl.font-bold').first().text().trim().split(' (')[0]; // Extract only the name part
+        const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim().split('(')[1].split(')')[0]; // Extract uid without parentheses
 
         // Extract level text
-        const levelText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .font-bold').first().text().trim();
+        const levelText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .font-bold').first().text().trim().replace(/\s+/g, ''); // Remove spaces
 
-        // Extract experience text (correct index)
+        // Extract experience text
         const experienceText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .flex.flex-col.space-y-1.5.p-5').eq(1).find('.font-bold').text().trim();
 
         // Extract portal energy text
-        const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-1 .font-bold').first().text().trim();
-
-        // Extract battle stats Top 1 text
-        const top1Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').first().text().trim();
-
-        // Extract battle stats Top 3 text (correct index)
-        const top3Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3').eq(1).find('.font-bold').text().trim();
-
-        // Extract party text (correct index)
-        const partyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3').eq(2).find('.font-bold').text().trim();
+        const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .font-bold').first().text().trim().replace(/Portal Energy:/, 'World journey (PE):'); // Rename field
 
         // Extract chest cycle fields
-        const battleChestsOpened = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').first().text().trim();
-        const lastChestInCycle = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2').eq(1).find('.font-bold').text().trim();
+        const battleChestsOpened = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-2 .font-bold').first().text().trim();
+        
+        // Extract last and next chest
+        const lastChest = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-5.md\\:gap-4 .opacity-50').first().text().trim(); // Last chest type
+        const nextChest = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-5.md\\:gap-4').eq(1).find('.font-bold').text().trim(); // Next chest type
+        
+        // Get next chest type description
+        const nextChestType = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-5.md\\:gap-4').eq(1).find('h6').text().trim(); // Next chest description
+
+        // Extract battle stats Top 1, Top 3, and Party text
+        const top1Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(0).text().trim();
+        const top3Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(1).text().trim();
+        const partyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(2).text().trim();
+
+        // Extract upcoming epic chests
+        const upcomingEpicChests = [];
+        $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1').eq(1).find('.grid-cols-5 .text-2xl.font-bold').each((index, element) => {
+            upcomingEpicChests.push($(element).text().trim());
+        });
+
+        const upcomingChestsList = upcomingEpicChests.join(', '); // Join the upcoming chests for the response
 
         const extractedData = {
             Name: name,
-            Uid: uidFromHtml || uid,
+            Uid: uidFromHtml,
             Lvl: levelText,
             "Exp Ivl": experienceText,
-            "Portal Energy": portalEnergyText,
-            "Battle Stats": {
+            "World journey (PE)": portalEnergyText,
+            "Battle stats": {
                 "Top 1": top1Text,
                 "Top 3": top3Text,
                 "Party": partyText
             },
             "Chest Cycle": {
-                "Battle Chests Opened": battleChestsOpened,
-                "Last Chest in Cycle": lastChestInCycle
+                "Battle chests opened": battleChestsOpened,
+                "Last chest": `${lastChest} (${nextChestType})`, // Include chest type for last chest
+                "Next chest": `${nextChest} (${nextChestType})`, // Include chest type for next chest
+                "Upcoming epic chests in": upcomingChestsList
             }
         };
 
