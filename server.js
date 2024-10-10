@@ -2217,7 +2217,7 @@ app.get('/squadbusters', async (req, res) => {
     }
 });
 
-app.get('/sb', async (req, res) => {
+app.get('/squadbusters', async (req, res) => {
     const uid = req.query.uid;
     if (!uid) {
         return res.status(400).json({ error: 'uid parameter is required' });
@@ -2235,8 +2235,8 @@ app.get('/sb', async (req, res) => {
         // Extract level text
         const levelText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .font-bold').first().text().trim();
 
-        // Extract experience text
-        const experienceText = $('.flex.flex-col.space-y-1.5.p-5').eq(1).find('.font-bold').text().trim();
+        // Extract experience text (correct index)
+        const experienceText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .flex.flex-col.space-y-1.5.p-5').eq(1).find('.font-bold').text().trim();
 
         // Extract portal energy text
         const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-1 .font-bold').first().text().trim();
@@ -2244,11 +2244,19 @@ app.get('/sb', async (req, res) => {
         // Extract battle stats Top 1 text
         const top1Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').first().text().trim();
 
-        // Extract battle stats Top 3 text
+        // Extract battle stats Top 3 text (correct index)
         const top3Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3').eq(1).find('.font-bold').text().trim();
 
-        // Extract party text
+        // Extract party text (correct index)
         const partyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3').eq(2).find('.font-bold').text().trim();
+
+        // Log the extracted values for debugging
+        console.log('Level Text:', levelText);
+        console.log('Experience Text:', experienceText);
+        console.log('Portal Energy Text:', portalEnergyText);
+        console.log('Top 1 Text:', top1Text);
+        console.log('Top 3 Text:', top3Text);
+        console.log('Party Text:', partyText);
 
         const extractedData = {
             Name: name,
@@ -2260,7 +2268,7 @@ app.get('/sb', async (req, res) => {
                 "Top 1": top1Text,
                 "Top 3": top3Text,
                 "Party": partyText
-            },
+            }
         };
 
         res.json(extractedData);
@@ -2269,6 +2277,7 @@ app.get('/sb', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while processing the request' });
     }
 });
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
