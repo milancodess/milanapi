@@ -2217,7 +2217,7 @@ app.get('/squadbusters', async (req, res) => {
     }
 });
 
-app.get('/squadbusters', async (req, res) => {
+app.get('/sb', async (req, res) => {
     const uid = req.query.uid;
     if (!uid) {
         return res.status(400).json({ error: 'uid parameter is required' });
@@ -2250,13 +2250,9 @@ app.get('/squadbusters', async (req, res) => {
         // Extract party text (correct index)
         const partyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3').eq(2).find('.font-bold').text().trim();
 
-        // Log the extracted values for debugging
-        console.log('Level Text:', levelText);
-        console.log('Experience Text:', experienceText);
-        console.log('Portal Energy Text:', portalEnergyText);
-        console.log('Top 1 Text:', top1Text);
-        console.log('Top 3 Text:', top3Text);
-        console.log('Party Text:', partyText);
+        // Extract chest cycle fields
+        const battleChestsOpened = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').first().text().trim();
+        const lastChestInCycle = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2').eq(1).find('.font-bold').text().trim();
 
         const extractedData = {
             Name: name,
@@ -2268,6 +2264,10 @@ app.get('/squadbusters', async (req, res) => {
                 "Top 1": top1Text,
                 "Top 3": top3Text,
                 "Party": partyText
+            },
+            "Chest Cycle": {
+                "Battle Chests Opened": battleChestsOpened,
+                "Last Chest in Cycle": lastChestInCycle
             }
         };
 
