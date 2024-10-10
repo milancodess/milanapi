@@ -2252,13 +2252,12 @@ app.get('/sb', async (req, res) => {
         const partyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(2).text().trim();
 
         // Extract upcoming epic chests
-        const upcomingEpicChests = [];
-        $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1').eq(1).find('.grid-cols-5 .text-2xl.font-bold').each((index, element) => {
-            upcomingEpicChests.push($(element).text().trim());
-        });
+        const battleChestsOpenedText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .rounded-lg.bg-[#0e53b7]/30').first()
+            .find('.flex.flex-col.space-y-1\\.5.p-5 .font-bold').first().text().trim();
 
-        const upcomingChestsList = upcomingEpicChests.join(', '); // Join the upcoming chests for the response
-
+        // Extract last chest in cycle
+        const lastChestInCycleText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .rounded-lg.bg-[#0e53b7]/30').last()
+            .find('.flex.flex-col.space-y-1\\.5.p-5 .font-bold').first().text().trim();
         const extractedData = {
             Name: name,
             Uid: uidFromHtml,
@@ -2271,8 +2270,8 @@ app.get('/sb', async (req, res) => {
                 "Party": partyText
             },
             "Chest Cycle": {
-                "Battle chests opened": battleChestsOpened,
-                "Upcoming epic chests in": upcomingChestsList
+                "Battle chests opened": battleChestsOpenedText,
+                "Last chest in cycle": lastChestInCycleText
             }
         };
 
