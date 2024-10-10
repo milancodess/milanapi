@@ -2232,26 +2232,12 @@ app.get('/sb', async (req, res) => {
         const name = $('.text-2xl.font-bold').first().text().trim();
         const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim();
 
-        // Extract level
-        const levelText = $('.flex.flex-col.space-y-1.5.p-5').first().find('.font-bold').text().trim();
-        console.log('Level Text:', levelText);
+        const levelText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .font-bold').first().text().trim();
 
-        const levelMatch = levelText.match(/(\d+)\s*\/\s*(\d+)\s*\s*(\d+(\.\d+)?)\s*%\s*/);
-        const level = levelMatch ? {
-            currentLevel: levelMatch[1],
-            maxLevel: levelMatch[2],
-            percentage: levelMatch[3]
-        } : null;
-
-        console.log('Parsed Level:', level);
-
-        // Other extraction code...
-        
         const extractedData = {
             Name: name,
             Uid: uidFromHtml || uid,
-            Lvl: level
-            // Other extracted fields...
+            Lvl: levelText
         };
 
         res.json(extractedData);
