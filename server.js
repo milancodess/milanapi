@@ -2166,19 +2166,48 @@ app.get('/squadbusters', async (req, res) => {
         const name = $('.text-2xl.font-bold').first().text().trim();
         const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim();
 
-        let level = '';
-        const levelElement = $('.font-bold').next();
+        const levelText = $('.flex.flex-col.space-y-1.5.p-5').first().find('.font-bold').text().trim();
+        const levelMatch = levelText.match(/(\d+)\s*\/\s*(\d+)\s*(\d+(\.\d+)?)%/);
+        const level = levelMatch ? levelMatch[0] : null;
 
-        if (levelElement.is('div')) {
-            level = levelElement.text().trim();
-        } else if (levelElement.next().is('div')) {
-            level = levelElement.next().text().trim();
-        }
+        const experienceText = $('.flex.flex-col.space-y-1.5.p-5').eq(1).find('.font-bold').text().trim();
+        const experienceMatch = experienceText.match(/(\d{1,3}(,\d{3})*)\s*\/\s*(\d{1,3}(,\d{3})*)\s*(\d+(\.\d+)?)%/);
+        const experience = experienceMatch ? experienceMatch[0] : null;
+
+        const portalEnergyText = $('.flex.flex-col.space-y-1.5.p-5').eq(2).find('.font-bold').text().trim();
+        const portalEnergyMatch = portalEnergyText.match(/(\d{1,3}(,\d{3})*)\s*\/\s*(\d{1,3}(,\d{3})*)\s*(\d+(\.\d+)?)%/);
+        const worldJourney = portalEnergyMatch ? portalEnergyMatch[0] : null;
+
+        const top1Text = $('.flex.flex-col.space-y-1.5.p-5').eq(3).find('.font-bold').text().trim();
+        const top3Text = $('.flex.flex-col.space-y-1.5.p-5').eq(4).find('.font-bold').text().trim();
+        const partyText = $('.flex.flex-col.space-y-1.5.p-5').eq(5).find('.font-bold').text().trim();
+
+        const battleChestsOpenedText = $('.flex.flex-col.space-y-1.5.p-5').eq(6).find('.font-bold').text().trim();
+        const lastChestText = $('.flex.flex-col.space-y-1.5.p-5').eq(7).find('.font-bold').text().trim();
         
+        const nextChestText = $('.flex.flex-col.space-y-1.5.p-5').eq(8).find('.font-bold').text().trim();
+        
+        const upcomingEpicChestsText = $('.text-2xl.font-bold').eq(5).text().trim();
+        const upcomingEpicChestsCountText = $('h3.text-2xl.font-bold.text-center').first().text().trim();
+
+        const upcomingEpicChests = upcomingEpicChestsCountText.replace('+', '').trim();
         const extractedData = {
-            name,
-            uid: uidFromHtml || uid,
-            level
+            Name: name,
+            Uid: uidFromHtml || uid,
+            Lvl: level,
+            "Exp Ivl": experience,
+            "World journey (PE)": worldJourney,
+            "Battle stats": {
+                "Top 1": top1Text,
+                "Top 3": top3Text,
+                "Party": partyText
+            },
+            "Chest Cycle": {
+                "Battle chests opened": battleChestsOpenedText,
+                "Last chest in cycle": lastChestText,
+                "Next chest": nextChestText,
+                "Upcoming epic chests in": upcomingEpicChests
+            }
         };
 
         res.json(extractedData);
@@ -2187,7 +2216,6 @@ app.get('/squadbusters', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while processing the request' });
     }
 });
-
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
