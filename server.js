@@ -2231,13 +2231,13 @@ app.get('/sb', async (req, res) => {
 
         const name = $('.text-2xl.font-bold').first().text().trim();
         const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim();
-
         const levelText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .font-bold').first().text().trim();
-
+        const experienceText = $('.flex.flex-col.space-y-1.5.p-5').eq(1).find('.font-bold').text().trim();
         const extractedData = {
             Name: name,
             Uid: uidFromHtml || uid,
-            Lvl: levelText
+            Level: levelText,
+            Experience: experienceText
         };
 
         res.json(extractedData);
