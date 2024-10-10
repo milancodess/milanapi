@@ -2174,51 +2174,11 @@ app.get('/squadbusters', async (req, res) => {
         } else if (levelElement.next().is('div')) {
             level = levelElement.next().text().trim();
         }
-        const experienceElement = $('.rounded-lg.bg-[#0e53b7]/20').find('.font-bold').next();
-        const experience = experienceElement.text().trim();
-
-        const worldJourneyElement = $('.rounded-lg.bg-[#79C347]/20').find('.font-bold').next();
-        const worldJourney = worldJourneyElement.text().trim();
-
-        const portalEnergyElement = $('.rounded-lg.bg-[#79C347]/20').find('.font-bold').next().next();
-        const portalEnergy = portalEnergyElement.text().trim();
-
-        const battleStatsContainer = $('.rounded-lg.bg-[#fec800]/20');
-        const battleStats = battleStatsContainer.find('.rounded-lg').map((i, el) => {
-            const statName = $(el).find('.font-bold').text().trim();
-            const statValue = $(el).find('div[style]').css('width').replace('%', '');
-            return {
-                name: statName,
-                value: statValue
-            };
-        }).get();
-        const chestCycleContainer = $('.rounded-lg.bg-[#0e53b7]/20').last();
-        const battleChestsOpened = chestCycleContainer.find('.font-bold').eq(0).text().trim();
-        const lastChestInCycle = chestCycleContainer.find('.font-bold').eq(1).text().trim();
-        const nextChest = chestCycleContainer.find('.font-bold').eq(2).text().trim();
-        const upcomingEpicChests = chestCycleContainer.find('.font-bold').last().text().trim().split(', ');
-
-        const upcomingEpicChestsContainer = $('.rounded-lg.bg-[#e95da9]/10');
-        const epicChestElements = upcomingEpicChestsContainer.find('.flex.max-w-xs');
-        const extractedUpcomingEpicChests = epicChestElements.map((i, el) => {
-            const chestLevel = $(el).find('h3').text().trim();
-            return chestLevel;
-        }).get();
-
+        
         const extractedData = {
             name,
             uid: uidFromHtml || uid,
-            level,
-            experience,
-            worldJourney,
-            portalEnergy,
-            battleStats,
-            chestCycle: {
-                battleChestsOpened,
-                lastChestInCycle,
-                nextChest,
-                upcomingEpicChests: extractedUpcomingEpicChests
-            }
+            level
         };
 
         res.json(extractedData);
