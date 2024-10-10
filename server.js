@@ -2243,22 +2243,20 @@ app.get('/sb', async (req, res) => {
         // Extract portal energy text
         const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-1 .font-bold').first().text().trim();
 	    
-        // Extract battle chests opened
-        const battleChestsOpened = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-2 .font-bold').first().text().trim();
-        
         // Extract battle stats Top 1, Top 3, and Party text
         const top1Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(0).text().trim();
         const top3Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(1).text().trim();
         const partyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(2).text().trim();
 
         // Extract upcoming epic chests
-        const battleChestsOpenedText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .rounded-lg.bg-[#0e53b7]/30').first()
-            .find('.flex.flex-col.space-y-1\\.5.p-5 .font-bold').first().text().trim();
+        const battleChestsOpenedText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .flex.flex-col.space-y-1\\.5.p-5').first()
+            .find('.font-bold').first().text().trim();
 
         // Extract last chest in cycle
-        const lastChestInCycleText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .rounded-lg.bg-[#0e53b7]/30').last()
-            .find('.flex.flex-col.space-y-1\\.5.p-5 .font-bold').first().text().trim();
-        const extractedData = {
+        const lastChestInCycleText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .flex.flex-col.space-y-1\\.5.p-5').last()
+            .find('.font-bold').first().text().trim();
+	    
+	    const extractedData = {
             Name: name,
             Uid: uidFromHtml,
             Lvl: levelText,
