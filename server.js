@@ -2216,6 +2216,51 @@ app.get('/squadbusters', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while processing the request' });
     }
 });
+
+app.get('/sb', async (req, res) => {
+    const uid = req.query.uid;
+    if (!uid) {
+        return res.status(400).json({ error: 'uid parameter is required' });
+    }
+
+    try {
+        const response = await axios.get(`https://squrs.com/profile/${uid}`);
+        const html = response.data;
+
+        const $ = cheerio.load(html);
+
+        const name = $('.text-2xl.font-bold').first().text().trim();
+        const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim();
+
+        // Extract level
+        const levelText = $('.flex.flex-col.space-y-1.5.p-5').first().find('.font-bold').text().trim();
+        console.log('Level Text:', levelText);
+
+        const levelMatch = levelText.match(/(\d+)\s*\/\s*(\d+)\s*\s*(\d+(\.\d+)?)\s*%\s*/);
+        const level = levelMatch ? {
+            currentLevel: levelMatch[1],
+            maxLevel: levelMatch[2],
+            percentage: levelMatch[3]
+        } : null;
+
+        console.log('Parsed Level:', level);
+
+        // Other extraction code...
+        
+        const extractedData = {
+            Name: name,
+            Uid: uidFromHtml || uid,
+            Lvl: level
+            // Other extracted fields...
+        };
+
+        res.json(extractedData);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'An error occurred while processing the request' });
+    }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
