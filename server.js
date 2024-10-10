@@ -2153,7 +2153,6 @@ app.get('/chapter', async (req, res) => {
 
 app.get('/squadbusters', async (req, res) => {
     const uid = req.query.uid;
-
     if (!uid) {
         return res.status(400).json({ error: 'uid parameter is required' });
     }
@@ -2164,55 +2163,68 @@ app.get('/squadbusters', async (req, res) => {
 
         const $ = cheerio.load(html);
 
-        const name = $('div.text-2xl.font-bold').first().contents().get(0).nodeValue.trim();
-        const uidValue = $('div.text-2xl.font-bold a').text().trim();
+        const name = $('.text-2xl.font-bold').first().text().trim();
+        const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim();
 
-        const levelField = $(
-            'div.mx-auto.my-4.grid > div.rounded-lg > div.flex.flex-col.space-y-1.5.p-5'
-        ).map((i, el) => {
-            const text = $(el).contents().get(0).nodeValue.trim(); 
-            const boldText = $(el).find('div.font-bold').text().trim(); 
-            return `${text} ${boldText}`; 
-        }).get().join(', '); 
+        let level = '';
+        const levelElement = $('.font-bold').next();
 
-        const experienceField = $(
-            'div.rounded-lg.bg-[#0e53b7]/20 > div.flex.flex-col.space-y-1.5.p-5'
-        ).map((i, el) => {
-            const text = $(el).contents().get(0).nodeValue.trim();
-            const boldText = $(el).find('div.font-bold').text().trim(); 
-            return `${text} ${boldText}`;
-        }).get().join(', ');
+        if (levelElement.is('div')) {
+            level = levelElement.text().trim();
+        } else if (levelElement.next().is('div')) {
+            level = levelElement.next().text().trim();
+        }
+        const experienceElement = $('.rounded-lg.bg-[#0e53b7]/20').find('.font-bold').next();
+        const experience = experienceElement.text().trim();
 
-        const battleStats = $('div.mx-auto.my-4.grid.max-w-4xl.gap-4')
-            .find('div.rounded-lg.bg-[#fec800]/30')
-            .map((i, el) => {
-                const text = $(el).contents().get(0).nodeValue.trim();
-                const boldText = $(el).find('div.font-bold').text().trim(); 
-                return `${text} ${boldText}`;
-            }).get().join(', ');
+        const worldJourneyElement = $('.rounded-lg.bg-[#79C347]/20').find('.font-bold').next();
+        const worldJourney = worldJourneyElement.text().trim();
 
-        const chestCycle = $('div.mx-auto.my-4.grid.max-w-4xl.gap-4')
-            .find('div.flex.max-w-xs.flex-col.gap-4')
-            .map((i, el) => {
-                const chestTitle = $(el).find('h3').text().trim();
-                const chestDescription = $(el).find('h6').text().trim();
-                const chestImage = $(el).find('img').attr('src');
-                return { chestTitle, chestDescription, chestImage };
-            }).get();
+        const portalEnergyElement = $('.rounded-lg.bg-[#79C347]/20').find('.font-bold').next().next();
+        const portalEnergy = portalEnergyElement.text().trim();
 
-        const result = {
+        const battleStatsContainer = $('.rounded-lg.bg-[#fec800]/20');
+        const battleStats = battleStatsContainer.find('.rounded-lg').map((i, el) => {
+            const statName = $(el).find('.font-bold').text().trim();
+            const statValue = $(el).find('div[style]').css('width').replace('%', '');
+            return {
+                name: statName,
+                value: statValue
+            };
+        }).get();
+        const chestCycleContainer = $('.rounded-lg.bg-[#0e53b7]/20').last();
+        const battleChestsOpened = chestCycleContainer.find('.font-bold').eq(0).text().trim();
+        const lastChestInCycle = chestCycleContainer.find('.font-bold').eq(1).text().trim();
+        const nextChest = chestCycleContainer.find('.font-bold').eq(2).text().trim();
+        const upcomingEpicChests = chestCycleContainer.find('.font-bold').last().text().trim().split(', ');
+
+        const upcomingEpicChestsContainer = $('.rounded-lg.bg-[#e95da9]/10');
+        const epicChestElements = upcomingEpicChestsContainer.find('.flex.max-w-xs');
+        const extractedUpcomingEpicChests = epicChestElements.map((i, el) => {
+            const chestLevel = $(el).find('h3').text().trim();
+            return chestLevel;
+        }).get();
+
+        const extractedData = {
             name,
-            uid: uidValue,
-            level: levelField,
-            experience: experienceField,
+            uid: uidFromHtml || uid,
+            level,
+            experience,
+            worldJourney,
+            portalEnergy,
             battleStats,
-            chestCycle
+            chestCycle: {
+                battleChestsOpened,
+                lastChestInCycle,
+                nextChest,
+                upcomingEpicChests: extractedUpcomingEpicChests
+            }
         };
 
-        return res.json(result);
+        res.json(extractedData);
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: 'An error occurred while fetching data' });
+        res.status(500).json({ error: 'An error occurred while processing the request' });
     }
 });
 
