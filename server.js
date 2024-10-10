@@ -2239,18 +2239,11 @@ app.get('/sb', async (req, res) => {
         const experienceText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .flex.flex-col.space-y-1.5.p-5').eq(1).find('.font-bold').text().trim();
 
         // Extract portal energy text
-        const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .font-bold').first().text().trim().replace(/Portal Energy:/, 'World journey (PE):'); // Rename field
+        const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .font-bold').first().text().trim().replace(/Portal Energy:/, 'World journey (PE):'); // Rename field
 
-        // Extract chest cycle fields
+        // Extract battle chests opened
         const battleChestsOpened = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-2 .font-bold').first().text().trim();
         
-        // Extract last and next chest
-        const lastChest = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-5.md\\:gap-4 .opacity-50').first().text().trim(); // Last chest type
-        const nextChest = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-5.md\\:gap-4').eq(1).find('.font-bold').text().trim(); // Next chest type
-        
-        // Get next chest type description
-        const nextChestType = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-5.md\\:gap-4').eq(1).find('h6').text().trim(); // Next chest description
-
         // Extract battle stats Top 1, Top 3, and Party text
         const top1Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(0).text().trim();
         const top3Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(1).text().trim();
@@ -2277,8 +2270,6 @@ app.get('/sb', async (req, res) => {
             },
             "Chest Cycle": {
                 "Battle chests opened": battleChestsOpened,
-                "Last chest": `${lastChest} (${nextChestType})`, // Include chest type for last chest
-                "Next chest": `${nextChest} (${nextChestType})`, // Include chest type for next chest
                 "Upcoming epic chests in": upcomingChestsList
             }
         };
