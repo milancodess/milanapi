@@ -2151,6 +2151,31 @@ app.get('/chapter', async (req, res) => {
     }
 });
 
+app.get('/squadbusters', async (req, res) => {
+    const uid = req.query.uid;
+
+    if (!uid) {
+        return res.status(400).json({ error: 'uid parameter is required' });
+    }
+
+    try {
+        const response = await axios.get(`https://squrs.com/profile/${uid}`);
+        const html = response.data;
+        
+        const $ = cheerio.load(html);
+
+        const result = {
+            name: $('div.text-2xl.font-bold').first().contents().get(0).nodeValue.trim(),
+            uid: $('div.text-2xl.font-bold a').text().trim()
+        };
+
+        return res.json(result);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'An error occurred while fetching data' });
+    }
+});
+		    
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
