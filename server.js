@@ -2231,13 +2231,36 @@ app.get('/sb', async (req, res) => {
 
         const name = $('.text-2xl.font-bold').first().text().trim();
         const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim();
+
+        // Extract level text
         const levelText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .font-bold').first().text().trim();
+
+        // Extract experience text
         const experienceText = $('.flex.flex-col.space-y-1.5.p-5').eq(1).find('.font-bold').text().trim();
+
+        // Extract portal energy text
+        const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-1 .font-bold').first().text().trim();
+
+        // Extract battle stats Top 1 text
+        const top1Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').first().text().trim();
+
+        // Extract battle stats Top 3 text
+        const top3Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3').eq(1).find('.font-bold').text().trim();
+
+        // Extract party text
+        const partyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3').eq(2).find('.font-bold').text().trim();
+
         const extractedData = {
             Name: name,
             Uid: uidFromHtml || uid,
-            Level: levelText,
-            Experience: experienceText
+            Lvl: levelText,
+            "Exp Ivl": experienceText,
+            "Portal Energy": portalEnergyText,
+            "Battle Stats": {
+                "Top 1": top1Text,
+                "Top 3": top3Text,
+                "Party": partyText
+            },
         };
 
         res.json(extractedData);
@@ -2246,7 +2269,6 @@ app.get('/sb', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while processing the request' });
     }
 });
-
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
