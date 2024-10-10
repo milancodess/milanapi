@@ -2154,28 +2154,80 @@ app.get('/chapter', async (req, res) => {
 app.get('/squadbusters', async (req, res) => {
     const uid = req.query.uid;
 
+    // Validate uid parameter
     if (!uid) {
         return res.status(400).json({ error: 'uid parameter is required' });
     }
 
     try {
+        // Fetch the HTML content from the target URL
         const response = await axios.get(`https://squrs.com/profile/${uid}`);
         const html = response.data;
-        
+
+        // Load the HTML into cheerio
         const $ = cheerio.load(html);
 
-        const result = {
-            name: $('div.text-2xl.font-bold').first().contents().get(0).nodeValue.trim(),
-            uid: $('div.text-2xl.font-bold a').text().trim()
+        // Extract the required texts
+        const name = $('div.text-2xl.font-bold').first().contents().get(0).nodeValue.trim();
+        const uidValue = $('div.text-2xl.font-bold a').text().trim();
+
+        // Extract the level and experience fields
+        const levelField = $(
+            'div.mx-auto.my-4.grid > div.rounded-lg > div.flex.flex-col.space-y-1.5.p-5'
+        ).map((i, el) => {
+            const text = $(el).contents().get(0).nodeValue.trim(); // First text node
+            const boldText = $(el).find('div.font-bold').text().trim(); // Bold text
+            return `${text} ${boldText}`; // Combine the texts
+        }).get().join(', '); // Join multiple levels if necessary
+
+        const experienceField = $(
+            'div.rounded-lg.bg-[#0e53b7]/20 > div.flex.flex-col.space-y-1.5.p-5'
+        ).map((i, el) => {
+            const text = $(el).contents().get(0).nodeValue.trim(); // First text node
+            const boldText = $(el).find('div.font-bold').text().trim(); // Bold text
+            return `${text} ${boldText}`; // Combine the texts
+        }).get().join(', '); // Join multiple experiences if necessary
+
+        // Extract battle stats
+        const battleStats = {
+            "Top 1": $('div.mx-auto.my-4.grid.max-w-4xl.gap-4')
+                .find('div.rounded-lg.bg-[#fec800]/30')
+                .eq(0).find('div.font-bold').text().trim(), // Top 1
+            "Top 3": $('div.mx-auto.my-4.grid.max-w-4xl.gap-4')
+                .find('div.rounded-lg.bg-[#fec800]/30')
+                .eq(1).find('div.font-bold').text().trim(), // Top 3
+            "Party": $('div.mx-auto.my-4.grid.max-w-4xl.gap-4')
+                .find('div.rounded-lg.bg-[#fec800]/30')
+                .eq(2).find('div.font-bold').text().trim()  // Party
         };
 
+        // Extract chest cycle information
+        const chestCycle = {
+            "Battle chests opened": $('div.flex.max-w-xs.flex-col.gap-4').find('h3').eq(0).text().trim(),
+            "Last chest in cycle": $('div.flex.max-w-xs.flex-col.gap-4').find('h3').eq(1).text().trim(),
+            "Next chest": $('div.flex.max-w-xs.flex-col.gap-4').find('h3').eq(2).text().trim(),
+            "Upcoming epic chests in": $('div.flex.max-w-xs.flex-col.gap-4').find('h3').eq(3).text().trim()
+        };
+
+        // Create the result object
+        const result = {
+            Name: name,
+            Uid: uidValue,
+            Lvl: levelField,
+            "Exp Ivl": experienceField,
+            "World journey (PE)": experienceField, // Assuming you need this
+            "Battle stats": battleStats,
+            "Chest Cycle": chestCycle
+        };
+
+ 
         return res.json(result);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'An error occurred while fetching data' });
     }
 });
-		    
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
