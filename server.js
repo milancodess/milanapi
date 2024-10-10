@@ -2263,7 +2263,7 @@ app.get('/sb', async (req, res) => {
             Name: name,
             Uid: uidFromHtml,
             Lvl: levelText,
-            "Exp Ivl": experienceText,
+            "Experience": experienceText,
             "World journey (PE)": portalEnergyText,
             "Battle stats": {
                 "Top 1": top1Text,
