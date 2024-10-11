@@ -2245,6 +2245,9 @@ app.get('/sb', async (req, res) => {
         // Extract upcoming epic chests
         const battleChestsOpened = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').eq(0).text().trim();
         const lastChestInCycle = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').eq(1).text().trim();
+
+        const lastChestName = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-xs.font-bold.text-center.opacity-50').eq(0).text().trim();
+        const nextChestName = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-xs.font-bold.text-center').eq(1).text().trim();
 	    
 	    const extractedData = {
             Name: name,
@@ -2259,7 +2262,9 @@ app.get('/sb', async (req, res) => {
             },
             "Chest Cycle": {
                 "Battle chests opened": battleChestsOpened,
-                "Last chest in cycle": lastChestInCycle
+                "Last chest in cycle": lastChestInCycle,
+	        "Last chest": lastChestName,
+                "Next chest": nextChestName
             }
         };
 
