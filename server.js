@@ -2239,8 +2239,8 @@ app.get('/sb', async (req, res) => {
 
         // Extract experience
         const experienceText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2')
-            .first()
-            .find('.flex.flex-col.space-y-1\\.5.p-5').first().find('.font-bold').first().text().trim().trim();
+            .eq(1)
+            .find('.flex.flex-col.space-y-1\\.5.p-5').first().find('.font-bold').first().text().trim();
 	    
         // Extract portal energy text
         const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-1 .font-bold').first().text().trim();
