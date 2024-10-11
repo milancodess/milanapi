@@ -2203,10 +2203,8 @@ app.get('/squadbusters', async (req, res) => {
                 "Party": partyText
             },
             "Chest Cycle": {
-                "Battle chests opened": battleChestsOpenedText,
-                "Last chest in cycle": lastChestText,
-                "Next chest": nextChestText,
-                "Upcoming epic chests in": upcomingEpicChests
+                "Battle chests opened": battleChestsOpened,
+                "Last chest in cycle": lastChestInCycle
             }
         };
 
@@ -2245,12 +2243,8 @@ app.get('/sb', async (req, res) => {
         const partyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(2).text().trim();
 
         // Extract upcoming epic chests
-        const battleChestsOpenedText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .flex.flex-col.space-y-1\\.5.p-5').first()
-            .find('.font-bold').first().text().trim();
-
-        // Extract last chest in cycle
-        const lastChestInCycleText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .flex.flex-col.space-y-1\\.5.p-5').last()
-            .find('.font-bold').first().text().trim();
+        const battleChestsOpened = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').eq(0).text().trim();
+        const lastChestInCycle = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').eq(1).text().trim();
 	    
 	    const extractedData = {
             Name: name,
