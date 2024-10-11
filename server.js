@@ -2233,14 +2233,8 @@ app.get('/sb', async (req, res) => {
         const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim().split('(')[1].split(')')[0]; // Extract uid without parentheses
 
         // Extract level
-        const levelText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2')
-            .first()
-            .find('.flex.flex-col.space-y-1\\.5.p-5').first().find('.font-bold').first().text().trim();
-
-        // Extract experience
-        const experienceText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2')
-            .eq(1)
-            .find('.flex.flex-col.space-y-1\\.5.p-5').first().find('.font-bold').first().text().trim();
+        const levelText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .font-bold').eq(0).text().trim();
+        const experienceText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .font-bold').eq(1).text().trim();
 	    
         // Extract portal energy text
         const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-1 .font-bold').first().text().trim();
