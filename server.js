@@ -2248,6 +2248,13 @@ app.get('/sb', async (req, res) => {
 
         const lastChestName = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-xs.font-bold.text-center.opacity-50').eq(0).text().trim();
         const nextChestName = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-xs.font-bold.text-center').eq(1).text().trim();
+
+const upcomingEpicChests = [];
+$('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-2xl.font-bold.text-center').each(function() {
+  upcomingEpicChests.push($(this).text().trim());
+});
+
+const upcomingEpicChestsString = upcomingEpicChests.join(',');
 	    
 	    const extractedData = {
             Name: name,
@@ -2264,7 +2271,8 @@ app.get('/sb', async (req, res) => {
                 "Battle chests opened": battleChestsOpened,
                 "Last chest in cycle": lastChestInCycle,
 	        "Last chest": lastChestName,
-                "Next chest": nextChestName
+                "Next chest": nextChestName,
+		"Upcoming Epic Chests": upcomingEpicChestsString
             }
         };
 
