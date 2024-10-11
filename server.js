@@ -2258,8 +2258,8 @@ app.get('/sb', async (req, res) => {
                 "Party": partyText
             },
             "Chest Cycle": {
-                "Battle chests opened": battleChestsOpenedText,
-                "Last chest in cycle": lastChestInCycleText
+                "Battle chests opened": battleChestsOpened,
+                "Last chest in cycle": lastChestInCycle
             }
         };
 
