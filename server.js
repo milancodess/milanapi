@@ -2340,8 +2340,9 @@ app.get('/sb69', async (req, res) => {
         };
 
         const browser = await puppeteer.launch({
-            args: ['--no-sandbox']
-        });
+  executablePath: '/usr/bin/chromium-browser', 
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
         const page = await browser.newPage();
         await page.setViewport({ width: 1920, height: 1080 });
         await page.goto(`https://squrs.com/profile/${uid}`, { waitUntil: 'networkidle0' });
