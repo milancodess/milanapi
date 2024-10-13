@@ -2283,6 +2283,99 @@ const upcomingEpicChestsString = upcomingEpicChests.join(',');
     }
 });
 
+const puppeteer = require('puppeteer');
+app.get('/sb69', async (req, res) => {
+    const uid = req.query.uid;
+    if (!uid) {
+        return res.status(400).json({ error: 'uid parameter is required' });
+    }
+
+    try {
+        const response = await axios.get(`https://squrs.com/profile/${uid}`);
+        const html = response.data;
+        const $ = cheerio.load(html);
+
+        const name = $('.text-2xl.font-bold').first().text().trim().split(' (')[0];
+        const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim().split('(')[1].split(')')[0];
+
+        const levelText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .font-bold').eq(0).text().trim();
+        const experienceText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-2 .font-bold').eq(1).text().trim();
+        const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-1 .font-bold').first().text().trim();
+
+        const top1Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(0).text().trim();
+        const top3Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(1).text().trim();
+        const partyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(2).text().trim();
+
+        const battleChestsOpened = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').eq(0).text().trim();
+        const lastChestInCycle = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').eq(1).text().trim();
+
+        const lastChestName = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-xs.font-bold.text-center.opacity-50').eq(0).text().trim();
+        const nextChestName = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-xs.font-bold.text-center').eq(1).text().trim();
+
+        const upcomingEpicChests = [];
+        $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-2xl.font-bold.text-center').each(function () {
+            upcomingEpicChests.push($(this).text().trim());
+        });
+
+        const upcomingEpicChestsString = upcomingEpicChests.join(',');
+
+        const extractedData = {
+            Name: name,
+            Uid: uidFromHtml,
+            Lvl: levelText,
+            Experience: experienceText,
+            "World journey (PE)": portalEnergyText,
+            "Battle stats": {
+                "Top 1": top1Text,
+                "Top 3": top3Text,
+                "Party": partyText
+            },
+            "Chest Cycle": {
+                "Battle chests opened": battleChestsOpened,
+                "Last chest in cycle": lastChestInCycle,
+                "Last chest": lastChestName,
+                "Next chest": nextChestName,
+                "Upcoming Epic Chests": upcomingEpicChestsString
+            }
+        };
+
+        const browser = await puppeteer.launch({
+            args: ['--no-sandbox']
+        });
+        const page = await browser.newPage();
+        await page.setViewport({ width: 1920, height: 1080 });
+        await page.goto(`https://squrs.com/profile/${uid}`, { waitUntil: 'networkidle0' });
+
+        const element = await page.$('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2');
+        if (element) {
+            const boundingBox = await element.boundingBox();
+            
+            const screenshotPath = 'screenshot.png';
+            await page.screenshot({
+                path: screenshotPath,
+                clip: {
+                    x: boundingBox.x,
+                    y: boundingBox.y,
+                    width: boundingBox.width,
+                    height: boundingBox.height
+                }
+            });
+        }
+
+        await browser.close();
+
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', 'inline; filename="screenshot.png"');
+        const imageStream = fs.createReadStream('screenshot.png');
+        imageStream.pipe(res);
+
+        res.json({ extractedData });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'An error occurred while processing the request' });
+    }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
