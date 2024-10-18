@@ -2379,6 +2379,10 @@ app.get('/sb69', async (req, res) => {
 
 app.get('/mocky', (req, res) => {
   const { prompt } = req.query;
+  
+  if (!prompt) {
+    return res.status(400).json({ error: "Query parameter 'prompt' is required" });
+  }
 
   const randomNum = Math.floor(100000000000 + Math.random() * 900000000000);
 
@@ -2407,7 +2411,13 @@ app.get('/mocky', (req, res) => {
     method: "POST"
   })
   .then(response => response.json())
-  .then(data => res.json(data))
+  .then(data => {
+    if (data && data.link) {
+      res.json({ link: data.link });
+    } else {
+      res.status(500).json({ error: 'Link not found in response!' });
+    }
+  })
   .catch(error => res.status(500).json({ error: 'Something went wrong!' }));
 });
 
