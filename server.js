@@ -2377,6 +2377,40 @@ app.get('/sb69', async (req, res) => {
     }
 });
 
+app.get('/mocky', (req, res) => {
+  const { prompt } = req.query;
+
+  const randomNum = Math.floor(100000000000 + Math.random() * 900000000000);
+
+  fetch("https://api.mocky.io/api/mock", {
+    headers: {
+      "accept": "*/*",
+      "accept-language": "en-US,en;q=0.9",
+      "content-type": "application/json",
+      "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+      "sec-ch-ua-mobile": "?1",
+      "sec-ch-ua-platform": "\"Android\"",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "same-site",
+      "Referer": "https://designer.mocky.io/",
+      "Referrer-Policy": "strict-origin-when-cross-origin"
+    },
+    body: JSON.stringify({
+      status: 200,
+      content: prompt,
+      content_type: "application/json",
+      charset: "UTF-8",
+      secret: `milan${randomNum}`,
+      expiration: "never"
+    }),
+    method: "POST"
+  })
+  .then(response => response.json())
+  .then(data => res.json(data))
+  .catch(error => res.status(500).json({ error: 'Something went wrong!' }));
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
