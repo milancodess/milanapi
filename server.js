@@ -2229,13 +2229,9 @@ app.get('/sb', async (req, res) => {
 
         const name = $('.text-2xl.font-bold').first().text().trim().split(' (')[0]; // Extract only the name part
         const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim().split('(')[1].split(')')[0]; // Extract uid without parentheses
+        const xpLevel = $('.grid.grid-cols-3.py-2').eq(0).find('.font-bold').text().trim();
+        const xpTotal = $('.grid.grid-cols-3.py-2').eq(1).find('.font-bold').text().trim();
 
-        // Get the XP Level
-        const xpLevelText = $('.grid.grid-cols-3.py-2').eq(0).text().replace(/\n/g, '').trim();
-  
-        // Get the XP Total
-        const xpTotalText = $('.grid.grid-cols-3.py-2').eq(1).text().replace(/\n/g, '').trim();
-	    
         // Extract portal energy text
         const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-1 .font-bold').first().text().trim();
 	    
@@ -2261,8 +2257,8 @@ const upcomingEpicChestsString = upcomingEpicChests.join(',');
 	    const extractedData = {
             Name: name,
             Uid: uidFromHtml,
-            xpLevel: xpLevelText,
-            xpTotal: xpTotalText,
+            xpLevel: xpLevel,
+            xpTotal: xpTotal,
             "World journey (PE)": portalEnergyText,
             "Battle stats": {
                 "Top 1": top1Text,
