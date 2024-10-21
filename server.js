@@ -2264,7 +2264,6 @@ app.get('/sb', async (req, res) => {
             xpTotal: xpTotal,
 	    portalEnergy: portalEnergy,
             squadLeague: squadLeague,
-            "World journey (PE)": portalEnergyText,
             "Battle stats": {
                 "Top 1": top1Text,
                 "Top 3": top3Text,
