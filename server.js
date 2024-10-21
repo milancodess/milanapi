@@ -1514,7 +1514,8 @@ app.get('/ytb', async (req, res) => {
     try {
         const searchResults = await searchYouTube(query);
         const videoDetails = await Promise.all(searchResults.map(video => getVideoDetails(video.url)));
-        res.json(videoDetails);
+        const validVideoDetails = videoDetails.filter(details => details !== null); // Filter out nulls
+        res.json(validVideoDetails);
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: 'Internal Server Error' });
@@ -1527,16 +1528,21 @@ async function searchYouTube(query) {
 }
 
 async function getVideoDetails(videoUrl) {
-    const info = await ytdl.getInfo(videoUrl);
-    const videoDetails = {
-        title: info.videoDetails.title,
-        thumbnail: info.videoDetails.thumbnails[0].url,
-        url: videoUrl,
-        downloadable_audio: ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url,
-        downloadable_video: ytdl.chooseFormat(info.formats, { quality: 'highest' }).url,
-        channel: info.videoDetails.author.name,
-    };
-    return videoDetails;
+    try {
+        const info = await ytdl.getInfo(videoUrl);
+        const videoDetails = {
+            title: info.videoDetails.title,
+            thumbnail: info.videoDetails.thumbnails[0].url,
+            url: videoUrl,
+            downloadable_audio: ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url,
+            downloadable_video: ytdl.chooseFormat(info.formats, { quality: 'highest' }).url,
+            channel: info.videoDetails.author.name,
+        };
+        return videoDetails;
+    } catch (error) {
+        console.error(`Error fetching details for ${videoUrl}:`, error.message);
+        return null;
+    }
 }
 
 app.get('/executec', async (req, res) => {
