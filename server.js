@@ -2239,9 +2239,9 @@ app.get('/sb', async (req, res) => {
         const squadLeague = $('.grid.grid-cols-2.py-2').find('.font-bold').eq(0).text().trim();
         // Extract battle stats Top 1, Top 3, and Party text
 
-	const top1Text = $("div:contains('Top 1')").next().find('.font-bold').text().trim();
-        const top3Text = $("div:contains('Top 3')").next().find('.font-bold').text().trim();
-        const partyText = $("div:contains('Party')").next().find('.font-bold').text().trim();
+	const top1 = $("div:contains('Top 1')").next().find('.font-bold').first().text().trim();
+        const top3 = $("div:contains('Top 3')").next().find('.font-bold').first().text().trim();
+        const party = $("div:contains('Party')").next().find('.font-bold').first().text().trim();
 	    
         // Extract upcoming epic chests
         const battleChestsOpened = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').eq(0).text().trim();
@@ -2265,9 +2265,9 @@ app.get('/sb', async (req, res) => {
 	    portalEnergy: portalEnergy,
             squadLeague: squadLeague,
             "Battle stats": {
-                "Top 1": top1Text,
-                "Top 3": top3Text,
-                "Party": partyText
+                "Top 1": top1,
+                "Top 3": top3,
+                "Party": party
             },
             "Chest Cycle": {
                 "Battle chests opened": battleChestsOpened,
