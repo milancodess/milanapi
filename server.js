@@ -2233,13 +2233,16 @@ app.get('/sb', async (req, res) => {
         const xpTotal = $('.grid.grid-cols-3.py-2').eq(1).find('.font-bold').text().trim();
 
         // Extract portal energy text
-        const portalEnergyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-1 .font-bold').first().text().trim();
-	    
-        // Extract battle stats Top 1, Top 3, and Party text
-        const top1Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(0).text().trim();
-        const top3Text = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(1).text().trim();
-        const partyText = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.sm\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.sm\\:my-4.sm\\:grid-cols-3 .font-bold').eq(2).text().trim();
+        const portalEnergy = $('.grid.grid-cols-3.py-2').find('.font-bold').eq(0).text().trim();
 
+        // Get the Squad League details and remove label "Squad League:"
+        const squadLeague = $('.grid.grid-cols-2.py-2').find('.font-bold').eq(0).text().trim();
+        // Extract battle stats Top 1, Top 3, and Party text
+
+	const top1Text = $("div:contains('Top 1')").next().find('.font-bold').text().trim();
+        const top3Text = $("div:contains('Top 3')").next().find('.font-bold').text().trim();
+        const partyText = $("div:contains('Party')").next().find('.font-bold').text().trim();
+	    
         // Extract upcoming epic chests
         const battleChestsOpened = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').eq(0).text().trim();
         const lastChestInCycle = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-1 .mx-auto.my-4.grid.max-w-4xl.grid-cols-1.gap-4.px-4.xs\\:grid-cols-1.sm\\:my-4.md\\:grid-cols-2 .font-bold').eq(1).text().trim();
@@ -2247,18 +2250,20 @@ app.get('/sb', async (req, res) => {
         const lastChestName = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-xs.font-bold.text-center.opacity-50').eq(0).text().trim();
         const nextChestName = $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-xs.font-bold.text-center').eq(1).text().trim();
 
-const upcomingEpicChests = [];
-$('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-2xl.font-bold.text-center').each(function() {
-  upcomingEpicChests.push($(this).text().trim());
-});
+        const upcomingEpicChests = [];
+              $('.mx-auto.my-4.grid.max-w-4xl.grid-cols-5.gap-4.px-4 .text-2xl.font-bold.text-center').each(function() {
+              upcomingEpicChests.push($(this).text().trim());
+         });
 
-const upcomingEpicChestsString = upcomingEpicChests.join(',');
+        const upcomingEpicChestsString = upcomingEpicChests.join(',');
 	    
 	    const extractedData = {
             Name: name,
             Uid: uidFromHtml,
             xpLevel: xpLevel,
             xpTotal: xpTotal,
+	    portalEnergy: portalEnergy,
+            squadLeague: squadLeague,
             "World journey (PE)": portalEnergyText,
             "Battle stats": {
                 "Top 1": top1Text,
