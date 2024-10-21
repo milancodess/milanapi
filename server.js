@@ -2263,7 +2263,6 @@ const upcomingEpicChestsString = upcomingEpicChests.join(',');
             Uid: uidFromHtml,
             xpLevel: xpLevelText,
             xpTotal: xpTotalText,
-            "Experience": experienceText,
             "World journey (PE)": portalEnergyText,
             "Battle stats": {
                 "Top 1": top1Text,
