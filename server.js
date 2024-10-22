@@ -2175,7 +2175,7 @@ app.get('/sb', async (req, res) => {
         const xpTotal = $('.grid.grid-cols-3.py-2').eq(1).find('.font-bold').text().trim();
 
         // Extract portal energy text
-        const portalEnergy = $('.rounded-lg .grid .grid-cols-3 .font-bold.text-right.col-span-2').eq(1).text().trim();
+        const portalEnergy = $('.rounded-lg .grid .grid-cols-3 .font-bold.text-right.col-span-2').eq(2).text().trim();
         // Get the Squad League details and remove label "Squad League:"
         const squadLeague = $('.grid.grid-cols-2.py-2').find('.font-bold').eq(0).text().trim();
         // Extract battle stats Top 1, Top 3, and Party text
