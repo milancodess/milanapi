@@ -2157,70 +2157,6 @@ app.get('/chapter', async (req, res) => {
     }
 });
 
-app.get('/squadbusters', async (req, res) => {
-    const uid = req.query.uid;
-    if (!uid) {
-        return res.status(400).json({ error: 'uid parameter is required' });
-    }
-
-    try {
-        const response = await axios.get(`https://squrs.com/profile/${uid}`);
-        const html = response.data;
-
-        const $ = cheerio.load(html);
-
-        const name = $('.text-2xl.font-bold').first().text().trim();
-        const uidFromHtml = $('.text-2xl.font-bold a').first().text().trim();
-
-        const levelText = $('.flex.flex-col.space-y-1.5.p-5').first().find('.font-bold').text().trim();
-        const levelMatch = levelText.match(/(\d+)\s*\/\s*(\d+)\s*(\d+(\.\d+)?)%/);
-        const level = levelMatch ? levelMatch[0] : null;
-
-        const experienceText = $('.flex.flex-col.space-y-1.5.p-5').eq(1).find('.font-bold').text().trim();
-        const experienceMatch = experienceText.match(/(\d{1,3}(,\d{3})*)\s*\/\s*(\d{1,3}(,\d{3})*)\s*(\d+(\.\d+)?)%/);
-        const experience = experienceMatch ? experienceMatch[0] : null;
-
-        const portalEnergyText = $('.flex.flex-col.space-y-1.5.p-5').eq(2).find('.font-bold').text().trim();
-        const portalEnergyMatch = portalEnergyText.match(/(\d{1,3}(,\d{3})*)\s*\/\s*(\d{1,3}(,\d{3})*)\s*(\d+(\.\d+)?)%/);
-        const worldJourney = portalEnergyMatch ? portalEnergyMatch[0] : null;
-
-        const top1Text = $('.flex.flex-col.space-y-1.5.p-5').eq(3).find('.font-bold').text().trim();
-        const top3Text = $('.flex.flex-col.space-y-1.5.p-5').eq(4).find('.font-bold').text().trim();
-        const partyText = $('.flex.flex-col.space-y-1.5.p-5').eq(5).find('.font-bold').text().trim();
-
-        const battleChestsOpenedText = $('.flex.flex-col.space-y-1.5.p-5').eq(6).find('.font-bold').text().trim();
-        const lastChestText = $('.flex.flex-col.space-y-1.5.p-5').eq(7).find('.font-bold').text().trim();
-        
-        const nextChestText = $('.flex.flex-col.space-y-1.5.p-5').eq(8).find('.font-bold').text().trim();
-        
-        const upcomingEpicChestsText = $('.text-2xl.font-bold').eq(5).text().trim();
-        const upcomingEpicChestsCountText = $('h3.text-2xl.font-bold.text-center').first().text().trim();
-
-        const upcomingEpicChests = upcomingEpicChestsCountText.replace('+', '').trim();
-        const extractedData = {
-            Name: name,
-            Uid: uidFromHtml || uid,
-            Lvl: level,
-            "Exp Ivl": experience,
-            "World journey (PE)": worldJourney,
-            "Battle stats": {
-                "Top 1": top1Text,
-                "Top 3": top3Text,
-                "Party": partyText
-            },
-            "Chest Cycle": {
-                "Battle chests opened": battleChestsOpened,
-                "Last chest in cycle": lastChestInCycle
-            }
-        };
-
-        res.json(extractedData);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'An error occurred while processing the request' });
-    }
-});
-
 app.get('/sb', async (req, res) => {
     const uid = req.query.uid;
     if (!uid) {
@@ -2239,7 +2175,7 @@ app.get('/sb', async (req, res) => {
         const xpTotal = $('.grid.grid-cols-3.py-2').eq(1).find('.font-bold').text().trim();
 
         // Extract portal energy text
-        const portalEnergyText = $('.rounded-lg .grid .grid-cols-3 .font-bold.text-right.col-span-2').first().text().trim();
+        const portalEnergy = $('.rounded-lg .grid .grid-cols-3 .font-bold.text-right.col-span-2').first().text().trim();
         // Get the Squad League details and remove label "Squad League:"
         const squadLeague = $('.grid.grid-cols-2.py-2').find('.font-bold').eq(0).text().trim();
         // Extract battle stats Top 1, Top 3, and Party text
