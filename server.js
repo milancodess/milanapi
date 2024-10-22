@@ -2216,11 +2216,11 @@ app.get('/sb', async (req, res) => {
                 "Party": partyText.replace('Total:', '').trim(),
             },
             "Battle Stats": {
-                "Busts / Battle": bustsPerBattle.replace('Total:', '').trim(),,
-                "Big NPCs / Battle": bigNPCsPerBattle.replace('Total:', '').trim(),,
-                "Bosses / Battle": bossesPerBattle.replace('Total:', '').trim(),,
-                "Gems / Battle": gemsPerBattle.replace('Total:', '').trim(),,
-                "Picks / Battle": picksPerBattle.replace('Total:', '').trim(),,
+                "Busts / Battle": bustsPerBattle.replace('Total:', '').trim(),
+                "Big NPCs / Battle": bigNPCsPerBattle.replace('Total:', '').trim(),
+                "Bosses / Battle": bossesPerBattle.replace('Total:', '').trim(),
+                "Gems / Battle": gemsPerBattle.replace('Total:', '').trim(),
+                "Picks / Battle": picksPerBattle.replace('Total:', '').trim(),
                 "Fusions / Battle": fusionsPerBattle.replace('Total:', '').trim(),
             },
             "Chest Cycle": {
