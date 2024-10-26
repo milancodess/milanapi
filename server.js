@@ -2318,7 +2318,19 @@ app.get('/ctdl', async (req, res) => {
         });
 
         const html = await response.text();
-        res.send(html);
+        const $ = cheerio.load(html);
+
+        const downloadLinks = [];
+        $('div.tk-down-link a').each((index, element) => {
+            const link = $(element).attr('href');
+            const text = $(element).text().trim();
+            if (link && link !== "javascript:void(0);") {
+                downloadLinks.push({ text, link });
+            }
+        });
+
+        res.json({ downloadLinks });
+
     } catch (error) {
         console.error('Error fetching data:', error);
         res.status(500).json({ error: 'Internal Server Error' });
