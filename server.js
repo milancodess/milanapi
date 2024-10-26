@@ -2320,16 +2320,23 @@ app.get('/ctdl', async (req, res) => {
         const html = await response.text();
         const $ = cheerio.load(html);
 
-        const downloadLinks = [];
+        const caption = $('#tk-search-h2').text().trim();
+
+        const data = [];
         $('div.tk-down-link a').each((index, element) => {
-            const link = $(element).attr('href');
-            const text = $(element).text().trim();
-            if (link && link !== "javascript:void(0);") {
-                downloadLinks.push({ text, link });
+            const url = $(element).attr('href');
+            const type = $(element).text().trim();
+            if (url && url !== "javascript:void(0);") {
+                data.push({ type, url });
             }
         });
 
-        res.json({ downloadLinks });
+        res.json({
+            developer: "@Milan Bhandari",
+            status: true,
+            caption,
+            data
+        });
 
     } catch (error) {
         console.error('Error fetching data:', error);
