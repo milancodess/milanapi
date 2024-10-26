@@ -2290,9 +2290,8 @@ app.get('/ctdl', async (req, res) => {
         return res.status(400).json({ error: 'videoUrl is required' });
     }
 
-    const url = `https://snapdouyin.app/wp-json/mx-downloader/video-data/`;
-    const token = '1090b847c13a7c240e18ecdd90ae3e9a3e5b55c57492c143f79e54a8db99cc80';
-    const hash = 'aHR0cHM6Ly92LmRvdXlpbi5jb20vaVNtb3Axdm0v1030YWlvLWRs';
+    const url = 'https://tiktokio.com/api/v1/tk-htmx';
+    const prefix = 'dtGslxrcdcG9raW8uY29t';
 
     try {
         const response = await fetch(url, {
@@ -2300,18 +2299,22 @@ app.get('/ctdl', async (req, res) => {
                 "accept": "*/*",
                 "accept-language": "en-US,en;q=0.9",
                 "content-type": "application/x-www-form-urlencoded",
+                "hx-current-url": "https://tiktokio.com/douyin-downloader/",
+                "hx-request": "true",
+                "hx-target": "tiktok-parse-result",
+                "hx-trigger": "search-btn",
                 "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
                 "sec-ch-ua-mobile": "?1",
                 "sec-ch-ua-platform": "\"Android\"",
                 "sec-fetch-dest": "empty",
                 "sec-fetch-mode": "cors",
                 "sec-fetch-site": "same-origin",
-                "cookie": "pll_language=en; PHPSESSID=s2p3dhtgfc9q9glv8oc1203ku2; _gidTlA=_1=1",
-                "Referer": "https://snapdouyin.app/",
+                "cookie": "trp_language=en_US",
+                "Referer": "https://tiktokio.com/douyin-downloader/",
                 "Referrer-Policy": "strict-origin-when-cross-origin"
             },
             method: "POST",
-            body: `url=${encodeURIComponent(videoUrl)}&token=${token}&hash=${hash}`
+            body: `prefix=${prefix}&vid=${encodeURIComponent(videoUrl)}`
         });
 
         const data = await response.json();
