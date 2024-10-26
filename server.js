@@ -2317,8 +2317,8 @@ app.get('/ctdl', async (req, res) => {
             body: `prefix=${prefix}&vid=${encodeURIComponent(videoUrl)}`
         });
 
-        const data = await response.json();
-        res.json(data);
+        const html = await response.text();
+        res.send(html);
     } catch (error) {
         console.error('Error fetching data:', error);
         res.status(500).json({ error: 'Internal Server Error' });
