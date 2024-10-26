@@ -2283,6 +2283,45 @@ app.get('/mocky', (req, res) => {
   .catch(error => res.status(500).json({ error: 'Something went wrong!' }));
 });
 
+app.get('/ctdl', async (req, res) => {
+    const { videoUrl } = req.query;
+
+    if (!videoUrl) {
+        return res.status(400).json({ error: 'videoUrl is required' });
+    }
+
+    const url = `https://snapdouyin.app/wp-json/mx-downloader/video-data/`;
+    const token = '1090b847c13a7c240e18ecdd90ae3e9a3e5b55c57492c143f79e54a8db99cc80';
+    const hash = 'aHR0cHM6Ly92LmRvdXlpbi5jb20vaVNtb3Axdm0v1030YWlvLWRs';
+
+    try {
+        const response = await fetch(url, {
+            headers: {
+                "accept": "*/*",
+                "accept-language": "en-US,en;q=0.9",
+                "content-type": "application/x-www-form-urlencoded",
+                "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+                "sec-ch-ua-mobile": "?1",
+                "sec-ch-ua-platform": "\"Android\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                "cookie": "pll_language=en; PHPSESSID=s2p3dhtgfc9q9glv8oc1203ku2; _gidTlA=_1=1",
+                "Referer": "https://snapdouyin.app/",
+                "Referrer-Policy": "strict-origin-when-cross-origin"
+            },
+            method: "POST",
+            body: `url=${encodeURIComponent(videoUrl)}&token=${token}&hash=${hash}`
+        });
+
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.listen(port, "0.0.0.0", function () {
     console.log(`Listening on port ${port}`)
 })       
