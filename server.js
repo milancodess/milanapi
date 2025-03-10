@@ -96,6 +96,27 @@ res.sendFile(path.join(__dirname, "dashboard","home.html"));
 app.get("/docs", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard", "docs.html"));
 });
+
+const { fetchLyrics } = require('searchlyrics');
+
+
+app.get('/subashr', async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).json({ error: 'URL parameter is required' });
+  }
+
+  try {
+    const data = await fetchLyrics(url);
+    res.json({
+      lyrics: data.lyrics,
+      image: data.image,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch lyrics', details: error.message });
+  }
+});
   
 app.get("/dp", (req, res) => {
     const key = req.query.apikey
