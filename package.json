@@ -37,6 +37,7 @@
     "random": "^4.1.0",
     "replicate": "^0.32.0",
     "request": "^2.88.2",
+    "searchlyrics": "^1.0.2",
     "simsimi-api": "^1.0.3",
     "string-similarity": "^4.0.4",
     "superagent": "^10.0.0",
