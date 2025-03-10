@@ -20,6 +20,7 @@ const cheerio = require("cheerio");
 const { createScreenshot } = require("./screenshot.js");
 const request = require("request");
 const stringSimilarity = require("string-similarity");
+const { fetchQueryDetails, fetchLyrics } = require('searchlyrics');
 const superagent = require('superagent');
 const fs = require("fs");
 const { v4: uuidv4 } = require('uuid');
@@ -97,10 +98,8 @@ app.get("/docs", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard", "docs.html"));
 });
 
-const { fetchLyrics } = require('searchlyrics');
 
-
-app.get('/subashr', async (req, res) => {
+app.get('/api/lyrics', async (req, res) => {
   const { url } = req.query;
 
   if (!url) {
