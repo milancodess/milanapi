@@ -98,6 +98,14 @@ app.get("/docs", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard", "docs.html"));
 });
 
+app.get("/mus", (req, res) => {
+res.sendFile(path.join(__dirname, "dashboard", "mus.html"));
+});
+
+app.get("/muskan", (req, res) => {
+res.sendFile(path.join(__dirname, "dashboard", "mus.html"));
+});
+
 
 app.get('/api/lyrics', async (req, res) => {
   const { url } = req.query;
