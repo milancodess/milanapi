@@ -106,36 +106,45 @@ app.get("/muskan", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard", "mus.html"));
 });
 
+const OMDB_API_KEY = 'a70c646f';
+
+async function fetchOmdbDetails(title) {
+  try {
+    const { data } = await axios.get(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${OMDB_API_KEY}`);
+    return data?.Plot || 'No description available';
+  } catch {
+    return 'No description available';
+  }
+}
+
 async function scrapeMedia(query) {
   const url = `https://ww25.soap2day.day/search/${encodeURIComponent(query)}`;
+  const results = [];
 
   try {
     const { data } = await axios.get(url);
     const $ = cheerio.load(data);
-    const results = [];
 
-    // Look in both movie and tvshow sections
-    ['#movies', '#tvshows'].forEach((section) => {
-      $(`${section} .ml-item`).each((i, el) => {
+    for (const section of ['#movies', '#tvshows']) {
+      const items = $(`${section} .ml-item`).toArray();
+
+      for (const el of items) {
         const element = $(el);
         const anchor = element.find('a');
         const title = element.find('.h2').text().trim();
         const link = anchor.attr('href');
         const image = anchor.find('img').attr('data-original')?.trim();
         const imdb = element.find('.imdb').text().trim();
-        const episode = element.find('.mli-eps i').text().trim() || null;
+        const year = element.find('#hidden_tip .jt-info a[rel="tag"]').first().text().trim();
+        const type = section.includes('tv') ? 'tv' : 'movie';
 
-        const hiddenTip = element.find('#hidden_tip');
-
-        const year = hiddenTip.find('.jt-info a[rel="tag"]').first().text().trim();
-        const rawDescription = hiddenTip.find('.f-desc').html() || '';
-        const description = cheerio.load(rawDescription).text().trim();
-
-        const country = hiddenTip.find('.block').first().find('a').text().trim();
         const genres = [];
-        hiddenTip.find('.block').last().find('a').each((_, genre) => {
+        element.find('#hidden_tip .block').last().find('a').each((_, genre) => {
           genres.push($(genre).text().trim());
         });
+
+        // Fetch proper description from OMDb
+        const description = await fetchOmdbDetails(title);
 
         results.push({
           title,
@@ -144,15 +153,13 @@ async function scrapeMedia(query) {
           imdb,
           year,
           description,
-          country: country || null,
           genres,
-          type: section.includes('tv') ? 'tv' : 'movie',
-          episodes: episode || undefined,
+          type,
         });
-      });
-    });
+      }
+    }
 
-    // Optional: filter by query match (already handled by search URL, but just in case)
+    // Return only relevant search results
     return results.filter(item =>
       item.title.toLowerCase().includes(query.toLowerCase())
     );
