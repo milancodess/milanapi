@@ -124,26 +124,30 @@ async function scrapeMedia(query) {
   try {
     const { data } = await axios.get(url);
     const $ = cheerio.load(data);
+    const results = [];
 
-    for (const section of ['#movies', '#tvshows']) {
-      const items = $(`${section} .ml-item`).toArray();
-
-      for (const el of items) {
+    // Look in both movie and tvshow sections
+    ['#movies', '#tvshows'].forEach((section) => {
+      $(`${section} .ml-item`).each((i, el) => {
         const element = $(el);
         const anchor = element.find('a');
         const title = element.find('.h2').text().trim();
         const link = anchor.attr('href');
         const image = anchor.find('img').attr('data-original')?.trim();
         const imdb = element.find('.imdb').text().trim();
-        const year = element.find('#hidden_tip .jt-info a[rel="tag"]').first().text().trim();
-        const type = section.includes('tv') ? 'tv' : 'movie';
+        const episode = element.find('.mli-eps i').text().trim() || null;
 
+        const hiddenTip = element.find('#hidden_tip');
+
+        const year = hiddenTip.find('.jt-info a[rel="tag"]').first().text().trim();
+        const rawDescription = hiddenTip.find('.f-desc').html() || '';
+        const description = cheerio.load(rawDescription).text().trim();
+
+        const country = hiddenTip.find('.block').first().find('a').text().trim();
         const genres = [];
-        element.find('#hidden_tip .block').last().find('a').each((_, genre) => {
+        hiddenTip.find('.block').last().find('a').each((_, genre) => {
           genres.push($(genre).text().trim());
         });
-
-        // Fetch proper description from OMDb
         const description = await fetchOmdbDetails(title);
 
         results.push({
@@ -153,11 +157,13 @@ async function scrapeMedia(query) {
           imdb,
           year,
           description,
+          country: country || null,
           genres,
-          type,
+          type: section.includes('tv') ? 'tv' : 'movie',
+          episodes: episode || undefined,
         });
-      }
-    }
+      });
+    });
 
     // Return only relevant search results
     return results.filter(item =>
