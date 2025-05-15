@@ -106,65 +106,72 @@ app.get("/muskan", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard", "mus.html"));
 });
 
-async function scrapeMovies(searchQuery) {
-  const url = `https://ww25.soap2day.day/search/${encodeURIComponent(searchQuery)}`;
+async function scrapeAllMedia(query) {
+  const url = `https://ww25.soap2day.day/search/${encodeURIComponent(query)}`;
   try {
     const { data } = await axios.get(url);
     const $ = cheerio.load(data);
-    const movies = [];
+    const results = [];
 
-    $('#movies .ml-item').each((i, el) => {
-      const element = $(el);
-      const anchor = element.find('a');
-      const img = anchor.find('img').attr('data-original')?.trim();
-      const title = element.find('.h2').text().trim();
-      const link = anchor.attr('href');
+    // Function to extract from any section (movies or tvshows)
+    function extractFromSection(sectionId) {
+      $(`${sectionId} .ml-item`).each((i, el) => {
+        const element = $(el);
+        const anchor = element.find('a');
+        const img = anchor.find('img').attr('data-original')?.trim();
+        const title = element.find('.h2').text().trim();
+        const link = anchor.attr('href');
+        const imdb = element.find('.imdb').text().trim();
+        const episode = element.find('.mli-eps i').text().trim() || null;
 
-      const imdb = element.find('.imdb').text().trim();
-      const runtime = element.find('.runtime').text().trim();
+        const hiddenTip = element.find('#hidden_tip');
+        const year = hiddenTip.find('.jt-info a[rel="tag"]').first().text().trim();
+        const description = hiddenTip.find('.f-desc').text().trim();
+        const country = hiddenTip.find('.block').first().find('a').text().trim();
+        const genres = [];
+        hiddenTip.find('.block').last().find('a').each((_, genre) => {
+          genres.push($(genre).text().trim());
+        });
 
-      const hiddenTip = element.find('#hidden_tip');
-      const year = hiddenTip.find('.jt-info a[rel="tag"]').first().text().trim();
-      const description = hiddenTip.find('.f-desc').text().trim();
-      const country = hiddenTip.find('.block').first().find('a').text().trim();
-
-      const genres = [];
-      hiddenTip.find('.block').last().find('a').each((_, genre) => {
-        genres.push($(genre).text().trim());
+        results.push({
+          title,
+          link,
+          image: img,
+          imdb,
+          year,
+          description,
+          country: country || null,
+          genres,
+          type: sectionId.includes('tvshows') ? 'tv' : 'movie',
+          episodes: episode || undefined,
+        });
       });
+    }
 
-      movies.push({
-        title,
-        link,
-        image: img,
-        imdb,
-        runtime,
-        year,
-        description,
-        country,
-        genres,
-      });
-    });
+    // Scrape both movies and tvshows
+    extractFromSection('#movies');
+    extractFromSection('#tvshows');
 
-    return movies;
-  } catch (error) {
-    throw new Error('Error scraping: ' + error.message);
+    return results;
+  } catch (err) {
+    throw new Error('Failed to scrape: ' + err.message);
   }
 }
 
 app.get('/api/movies', async (req, res) => {
-  const search = req.query.s;
-  if (!search) {
+  const query = req.query.s;
+  if (!query) {
     return res.status(400).json({ error: 'Missing required parameter ?s=' });
   }
 
   try {
-    const movies = await scrapeMovies(search);
-    res.json(movies);
+    const results = await scrapeAllMedia(query);
+    res.json(results);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 app.get('/api/lyrics', async (req, res) => {
