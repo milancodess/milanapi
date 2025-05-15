@@ -110,44 +110,50 @@ const OMDB_API_KEY = 'a70c646f';
 
 async function fetchOmdbDetails(title) {
   try {
-    const { data } = await axios.get(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${OMDB_API_KEY}`);
-    return data?.Plot || 'No description available';
+    const { data } = await axios.get('https://www.omdbapi.com/', {
+      params: {
+        apikey: OMDB_API_KEY,
+        t: title,
+      },
+    });
+
+    return data?.Plot && data.Plot !== 'N/A' ? data.Plot : null;
   } catch {
-    return 'No description available';
+    return null;
   }
 }
 
-async function scrapeMedia(query) {
-  const url = `https://ww25.soap2day.day/search/${encodeURIComponent(query)}`;
-  const results = [];
-
+async function scrapeMoviesAndTv(searchQuery) {
+  const url = `https://ww25.soap2day.day/search/${encodeURIComponent(searchQuery)}`;
   try {
     const { data } = await axios.get(url);
     const $ = cheerio.load(data);
     const results = [];
 
-    // Look in both movie and tvshow sections
-    ['#movies', '#tvshows'].forEach((section) => {
-      $(`${section} .ml-item`).each((i, el) => {
+    const sections = ['#movies .ml-item', '#tvshows .ml-item'];
+
+    for (const sectionSelector of sections) {
+      const section = sectionSelector.includes('tv') ? 'tv' : 'movie';
+      const items = $(sectionSelector).toArray();
+
+      for (const el of items) {
         const element = $(el);
         const anchor = element.find('a');
         const title = element.find('.h2').text().trim();
         const link = anchor.attr('href');
         const image = anchor.find('img').attr('data-original')?.trim();
         const imdb = element.find('.imdb').text().trim();
-        const episode = element.find('.mli-eps i').text().trim() || null;
+        const episode = element.find('.mli-eps i').text().trim();
 
         const hiddenTip = element.find('#hidden_tip');
-
         const year = hiddenTip.find('.jt-info a[rel="tag"]').first().text().trim();
-        const rawDescription = hiddenTip.find('.f-desc').html() || '';
-        const description = cheerio.load(rawDescription).text().trim();
-
         const country = hiddenTip.find('.block').first().find('a').text().trim();
+
         const genres = [];
         hiddenTip.find('.block').last().find('a').each((_, genre) => {
           genres.push($(genre).text().trim());
         });
+
         const description = await fetchOmdbDetails(title);
 
         results.push({
@@ -159,34 +165,32 @@ async function scrapeMedia(query) {
           description,
           country: country || null,
           genres,
-          type: section.includes('tv') ? 'tv' : 'movie',
+          type: section,
           episodes: episode || undefined,
         });
-      });
-    });
+      }
+    }
 
-    // Return only relevant search results
-    return results.filter(item =>
-      item.title.toLowerCase().includes(query.toLowerCase())
-    );
-  } catch (err) {
-    throw new Error('Failed to scrape: ' + err.message);
+    return results;
+  } catch (error) {
+    throw new Error('Scraping failed: ' + error.message);
   }
 }
 
 app.get('/api/movies', async (req, res) => {
-  const query = req.query.s;
-  if (!query) {
+  const search = req.query.s;
+  if (!search) {
     return res.status(400).json({ error: 'Missing required parameter ?s=' });
   }
 
   try {
-    const results = await scrapeMedia(query);
-    res.json(results);
+    const data = await scrapeMoviesAndTv(search);
+    res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 app.get('/api/lyrics', async (req, res) => {
   const { url } = req.query;
