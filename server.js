@@ -181,17 +181,6 @@ app.get('/api/movie', async (req, res) => {
     const poster = $('.thumb.mvi-cover').css('background-image').replace(/^url["']?/, '').replace(/["']?$/, '');
     const rating = $('#movie-mark').text().trim();
 
-    const genre = [];
-    const actors = [];
-
-    $('.mvici-right p').each((_, el) => {
-      const label = $(el).find('strong').text().toLowerCase();
-      const values = $(el).find('a').map((_, a) => $(a).text().trim()).get();
-
-      if (label.includes('genre')) genre.push(...values);
-      if (label.includes('cast') || label.includes('actor')) actors.push(...values);
-    });
-
     const servers = [];
     $('#content-embed iframe').each((_, el) => {
       const src = $(el).attr('src') || $(el).attr('data-src');
@@ -201,7 +190,7 @@ app.get('/api/movie', async (req, res) => {
     let description = $('.desc .f-desc').text().trim();
     description = description.replace(/You can view it for free on Soap2day\.?/i, '').trim();
 
-    res.json({ title, poster, rating, genre, actors, servers, description });
+    res.json({ title, poster, rating, servers, description });
 
   } catch (error) {
     res.status(500).json({ error: 'Failed to scrape data', details: error.message });
