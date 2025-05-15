@@ -123,15 +123,16 @@ async function scrapeMovies(searchQuery) {
       const imdb = element.find('.imdb').text().trim();
       const runtime = element.find('.runtime').text().trim();
 
-      const hiddenTip = element.find('#hidden_tip');
+      const hiddenTipHtml = anchor.attr('data-tip');
+      const hiddenTip = cheerio.load(hiddenTipHtml || '');
 
-      const year = hiddenTip.find('.jt-info a[rel="tag"]').first().text().trim();
-      const description = hiddenTip.find('.f-desc').text().trim();
-      const country = hiddenTip.find('.block').first().find('a').text().trim();
+      const year = hiddenTip('.jt-info a[rel="tag"]').first().text().trim();
+      const description = hiddenTip('.f-desc').text().trim();
+      const country = hiddenTip('.block').first().find('a').text().trim();
       const genres = [];
-      hiddenTip.find('.block').last().find('a').each((_, genre) => {
-        genres.push($(genre).text().trim());
-      });
+      hiddenTip('.block').last().find('a').each((_, genre) => {
+      genres.push($(genre).text().trim());
+   });
 
       movies.push({
         title,
