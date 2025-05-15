@@ -168,6 +168,46 @@ app.get('/api/movies', async (req, res) => {
   }
 });
 
+app.get('/api/movie', async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) return res.status(400).json({ error: 'Missing ?url= parameter' });
+
+  try {
+    const { data } = await axios.get(url);
+    const $ = cheerio.load(data);
+
+    const title = $('#bread li.active span').text().trim().replace('Text from here: ', '');
+    const poster = $('.thumb.mvi-cover').css('background-image').replace(/^url["']?/, '').replace(/["']?$/, '');
+    const rating = $('#movie-mark').text().trim();
+
+    const genre = [];
+    const actors = [];
+
+    $('.mvici-right p').each((_, el) => {
+      const label = $(el).find('strong').text().toLowerCase();
+      const values = $(el).find('a').map((_, a) => $(a).text().trim()).get();
+
+      if (label.includes('genre')) genre.push(...values);
+      if (label.includes('cast') || label.includes('actor')) actors.push(...values);
+    });
+
+    const servers = [];
+    $('#content-embed iframe').each((_, el) => {
+      const src = $(el).attr('src') || $(el).attr('data-src');
+      if (src) servers.push(src);
+    });
+
+    let description = $('.desc .f-desc').text().trim();
+    description = description.replace(/You can view it for free on Soap2day\.?/i, '').trim();
+
+    res.json({ title, poster, rating, genre, actors, servers, description });
+
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to scrape data', details: error.message });
+  }
+});
+
 app.get('/api/lyrics', async (req, res) => {
   const { url } = req.query;
 
