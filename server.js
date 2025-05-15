@@ -106,27 +106,31 @@ app.get("/muskan", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard", "mus.html"));
 });
 
-async function scrapeAllMedia(query) {
+async function scrapeMedia(query) {
   const url = `https://ww25.soap2day.day/search/${encodeURIComponent(query)}`;
+
   try {
     const { data } = await axios.get(url);
     const $ = cheerio.load(data);
     const results = [];
 
-    // Function to extract from any section (movies or tvshows)
-    function extractFromSection(sectionId) {
-      $(`${sectionId} .ml-item`).each((i, el) => {
+    // Look in both movie and tvshow sections
+    ['#movies', '#tvshows'].forEach((section) => {
+      $(`${section} .ml-item`).each((i, el) => {
         const element = $(el);
         const anchor = element.find('a');
-        const img = anchor.find('img').attr('data-original')?.trim();
         const title = element.find('.h2').text().trim();
         const link = anchor.attr('href');
+        const image = anchor.find('img').attr('data-original')?.trim();
         const imdb = element.find('.imdb').text().trim();
         const episode = element.find('.mli-eps i').text().trim() || null;
 
         const hiddenTip = element.find('#hidden_tip');
+
         const year = hiddenTip.find('.jt-info a[rel="tag"]').first().text().trim();
-        const description = hiddenTip.find('.f-desc').text().trim();
+        const rawDescription = hiddenTip.find('.f-desc').html() || '';
+        const description = cheerio.load(rawDescription).text().trim();
+
         const country = hiddenTip.find('.block').first().find('a').text().trim();
         const genres = [];
         hiddenTip.find('.block').last().find('a').each((_, genre) => {
@@ -136,23 +140,22 @@ async function scrapeAllMedia(query) {
         results.push({
           title,
           link,
-          image: img,
+          image,
           imdb,
           year,
           description,
           country: country || null,
           genres,
-          type: sectionId.includes('tvshows') ? 'tv' : 'movie',
+          type: section.includes('tv') ? 'tv' : 'movie',
           episodes: episode || undefined,
         });
       });
-    }
+    });
 
-    // Scrape both movies and tvshows
-    extractFromSection('#movies');
-    extractFromSection('#tvshows');
-
-    return results;
+    // Optional: filter by query match (already handled by search URL, but just in case)
+    return results.filter(item =>
+      item.title.toLowerCase().includes(query.toLowerCase())
+    );
   } catch (err) {
     throw new Error('Failed to scrape: ' + err.message);
   }
@@ -165,14 +168,12 @@ app.get('/api/movies', async (req, res) => {
   }
 
   try {
-    const results = await scrapeAllMedia(query);
+    const results = await scrapeMedia(query);
     res.json(results);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
-
 
 app.get('/api/lyrics', async (req, res) => {
   const { url } = req.query;
