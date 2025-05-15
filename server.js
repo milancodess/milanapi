@@ -124,10 +124,10 @@ async function scrapeMovies(searchQuery) {
       const runtime = element.find('.runtime').text().trim();
 
       const hiddenTip = element.find('#hidden_tip');
-
       const year = hiddenTip.find('.jt-info a[rel="tag"]').first().text().trim();
       const description = hiddenTip.find('.f-desc').text().trim();
       const country = hiddenTip.find('.block').first().find('a').text().trim();
+
       const genres = [];
       hiddenTip.find('.block').last().find('a').each((_, genre) => {
         genres.push($(genre).text().trim());
@@ -155,7 +155,7 @@ async function scrapeMovies(searchQuery) {
 app.get('/api/movies', async (req, res) => {
   const search = req.query.s;
   if (!search) {
-    return res.status(400).json({ error: 'Missing required parameter' });
+    return res.status(400).json({ error: 'Missing required parameter ?s=' });
   }
 
   try {
@@ -165,6 +165,7 @@ app.get('/api/movies', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 app.get('/api/lyrics', async (req, res) => {
   const { url } = req.query;
