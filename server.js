@@ -190,13 +190,15 @@ app.get('/api/movie', async (req, res) => {
     });
 
     let description = $('div[itemprop="description"] .f-desc').text().trim();
-
-    const sentences = description.split('.');
-    if (sentences.length >= 2) {
-      description = sentences.slice(0, -1).join('.').trim() + '.';
+    
+    // Remove last sentence (everything after last period followed by space)
+    const lastPeriodIndex = description.lastIndexOf('. ');
+    if (lastPeriodIndex !== -1) {
+      description = description.substring(0, lastPeriodIndex + 1);
     }
-   
-    description = description.replace(/(\s*(You can view it for free on|For those interested, it can be viewed on|Watch it for free on|Available on|Free to watch on)\s*Soap2day\.?\s*)/i, '').trim();
+    
+    // Additional cleanup in case there's no space after period
+    description = description.replace(/(.*)\..*$/, '$1.').trim();
 
     res.json({ title, poster, rating, servers, description });
   } catch (error) {
