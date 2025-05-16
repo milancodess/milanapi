@@ -102,6 +102,42 @@ app.get("/mus", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard", "mus.html"));
 });
 
+app.get("/s", async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) return res.status(400).json({ error: "URL parameter is required" });
+
+  const match = url.match(/spotify\.com\/(track|playlist)\/([a-zA-Z0-9]+)/);
+  if (!match) return res.status(400).json({ error: "Invalid Spotify URL" });
+
+  const type = match[1];
+  const id = match[2];
+
+  try {
+    const response = await axios.post(
+      "https://api.spotidownloader.com/tracks",
+      {
+        type,
+        id,
+        offset: 0,
+      },
+      {
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjAuQURGcTY1d2QtcURjdmh0V2xTTEtKdXJ1UGcxNVpRenFGYjYyQTZpU0djS0dXTmRIcUhYeVRoMWNnZ2J0LVBwYjlfdXRFTnpqLVQzX2VxNXRwRUxzMXlOazZ1TlRFMlpGVmZOUE9aZ19PWEZhV1BzVWFjN3VacllGLVRsbFNqMzZvaU5UOGUyZ3BOcWtJb0FxdE1NZVEwQ0Y4cW5LYWNVbDFTb0ZPYmxWZkhJWXY1T2JrdHlGQkQ1WjZya2phbmlJT0dsZGx5bHJjMU1DRVNYTkV4V1JNZE5rblZObHNFNkJRRmtDSHRUOXhUemh5cnhaZlFlM2lkWEpSODRWSlZNcmtNU0NPRVUyenQwVGtvUUd4SlNQbmtLeGRaRXVvYVE0QnpBb3czMHl5cGdPd19iaUgyRDc5ckdERldScVo1VEpjX3ZOYjJ6cGx3VFoxai1nVTc4bS02M2NsOFR4dHNId0YxWWtpS1VlcEthc0ZNa1dmMUlfalNGOEc1dWVBU2NsOTdWdFJBSGE1RHZwbWxtTkVWcldaOHdZS3hMWnVvSUxYcWd2TzljOWNFYzNTWWFpdHhCd1I5RXNRQkE5SnVubDd0U1FsQ0Rub0VQUlJXVkQtV3l1WFU5U2pVMDN1YWsxRTRTNjJpZHhFTFZRY0tIVkpsMEl2cFBDaWlEb0JQb0UxYjN5YnhsWXJ3YUZrTU9YUG1IU2NEaHVPWTB0VEMxVG12RDMwb0o4RUNkZmJEekE2bmJpV19NZmc4OVZTdWVZOXo0RkVUcUt1TU5vRE84UzducVkyZ1NJY0xwTUVqc2NQTWpsSjdjLTNTYjVRODVGdWotcmNYZGVpN1Z3Vlo0R0JmVjlSR3lKaU9Mb1ZQQm5PNG1VWDBfZXFUUk1yWDdWV1gxUHRwWU11WEFaYVZBTUx2Y1ZmNVhoX182MzNoQ0cySmROVjdCODU0enVHSDNJSklOUTNkaWxHSkNDVVJVVG5ZcjBqc0FhZHRYU0YxbUh2aWVmYjNpaGwxU2NVYlJUZXVqLTlnS1FWdlZUQWpHTTN5S293WElURmsza1dEWkNjY3BvaENzdUlsbTFqY0FWdGRnUlRuT08zSWpvZXBfVkw3eUd2X0pDUnNUWWxDazhSQ25Ca3RqbEk0Nk1jLTNQV0UtVkFIdUNUYmxJR3g1Uk5yZlFPZjUxS0VFVURjSmdqaE5ZeUFuUXhMdUZoSWlsclF6LXN3LmZzT2dWbUo3Mi1wcmFLcjVKdDJtQ1EuMTEwNDA3YjdiMDVhNzQwOGQyNTYxMmU1MmFmODY0Mjg1ZDNiYTZhYjk1ODA0NDUyMjY3NmZkMGQ3ZTA3YWM1MyIsImlhdCI6MTc0NzQxMTM4NCwiZXhwIjoxNzQ3NDExNzQ0fQ.jAAWJ0ZuORuYpQJGukpDv9KEWqNMVGLrsjZ2E2wOdKc",
+          Referer: "https://spotidownloader.com/",
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
+});
+		       
 async function scrapeSearchResults(query) {
   const url = `https://ww25.soap2day.day/search/${encodeURIComponent(query)}`;
   try {
