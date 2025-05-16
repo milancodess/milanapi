@@ -125,7 +125,6 @@ app.get("/s", async (req, res) => {
         headers: {
           accept: "application/json",
           "content-type": "application/json",
-          authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjAuQURGcTY1d2QtcURjdmh0V2xTTEtKdXJ1UGcxNVpRenFGYjYyQTZpU0djS0dXTmRIcUhYeVRoMWNnZ2J0LVBwYjlfdXRFTnpqLVQzX2VxNXRwRUxzMXlOazZ1TlRFMlpGVmZOUE9aZ19PWEZhV1BzVWFjN3VacllGLVRsbFNqMzZvaU5UOGUyZ3BOcWtJb0FxdE1NZVEwQ0Y4cW5LYWNVbDFTb0ZPYmxWZkhJWXY1T2JrdHlGQkQ1WjZya2phbmlJT0dsZGx5bHJjMU1DRVNYTkV4V1JNZE5rblZObHNFNkJRRmtDSHRUOXhUemh5cnhaZlFlM2lkWEpSODRWSlZNcmtNU0NPRVUyenQwVGtvUUd4SlNQbmtLeGRaRXVvYVE0QnpBb3czMHl5cGdPd19iaUgyRDc5ckdERldScVo1VEpjX3ZOYjJ6cGx3VFoxai1nVTc4bS02M2NsOFR4dHNId0YxWWtpS1VlcEthc0ZNa1dmMUlfalNGOEc1dWVBU2NsOTdWdFJBSGE1RHZwbWxtTkVWcldaOHdZS3hMWnVvSUxYcWd2TzljOWNFYzNTWWFpdHhCd1I5RXNRQkE5SnVubDd0U1FsQ0Rub0VQUlJXVkQtV3l1WFU5U2pVMDN1YWsxRTRTNjJpZHhFTFZRY0tIVkpsMEl2cFBDaWlEb0JQb0UxYjN5YnhsWXJ3YUZrTU9YUG1IU2NEaHVPWTB0VEMxVG12RDMwb0o4RUNkZmJEekE2bmJpV19NZmc4OVZTdWVZOXo0RkVUcUt1TU5vRE84UzducVkyZ1NJY0xwTUVqc2NQTWpsSjdjLTNTYjVRODVGdWotcmNYZGVpN1Z3Vlo0R0JmVjlSR3lKaU9Mb1ZQQm5PNG1VWDBfZXFUUk1yWDdWV1gxUHRwWU11WEFaYVZBTUx2Y1ZmNVhoX182MzNoQ0cySmROVjdCODU0enVHSDNJSklOUTNkaWxHSkNDVVJVVG5ZcjBqc0FhZHRYU0YxbUh2aWVmYjNpaGwxU2NVYlJUZXVqLTlnS1FWdlZUQWpHTTN5S293WElURmsza1dEWkNjY3BvaENzdUlsbTFqY0FWdGRnUlRuT08zSWpvZXBfVkw3eUd2X0pDUnNUWWxDazhSQ25Ca3RqbEk0Nk1jLTNQV0UtVkFIdUNUYmxJR3g1Uk5yZlFPZjUxS0VFVURjSmdqaE5ZeUFuUXhMdUZoSWlsclF6LXN3LmZzT2dWbUo3Mi1wcmFLcjVKdDJtQ1EuMTEwNDA3YjdiMDVhNzQwOGQyNTYxMmU1MmFmODY0Mjg1ZDNiYTZhYjk1ODA0NDUyMjY3NmZkMGQ3ZTA3YWM1MyIsImlhdCI6MTc0NzQxMTM4NCwiZXhwIjoxNzQ3NDExNzQ0fQ.jAAWJ0ZuORuYpQJGukpDv9KEWqNMVGLrsjZ2E2wOdKc",
           Referer: "https://spotidownloader.com/",
         },
       }
@@ -2444,67 +2443,6 @@ app.get('/mocky', (req, res) => {
     }
   })
   .catch(error => res.status(500).json({ error: 'Something went wrong!' }));
-});
-
-app.get('/ctdl', async (req, res) => {
-    const { videoUrl } = req.query;
-
-    if (!videoUrl) {
-        return res.status(400).json({ error: 'videoUrl is required' });
-    }
-
-    const url = 'https://tiktokio.com/api/v1/tk-htmx';
-    const prefix = 'dtGslxrcdcG9raW8uY29t';
-
-    try {
-        const response = await fetch(url, {
-            headers: {
-                "accept": "*/*",
-                "accept-language": "en-US,en;q=0.9",
-                "content-type": "application/x-www-form-urlencoded",
-                "hx-current-url": "https://tiktokio.com/douyin-downloader/",
-                "hx-request": "true",
-                "hx-target": "tiktok-parse-result",
-                "hx-trigger": "search-btn",
-                "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
-                "sec-ch-ua-mobile": "?1",
-                "sec-ch-ua-platform": "\"Android\"",
-                "sec-fetch-dest": "empty",
-                "sec-fetch-mode": "cors",
-                "sec-fetch-site": "same-origin",
-                "cookie": "trp_language=en_US",
-                "Referer": "https://tiktokio.com/douyin-downloader/",
-                "Referrer-Policy": "strict-origin-when-cross-origin"
-            },
-            method: "POST",
-            body: `prefix=${prefix}&vid=${encodeURIComponent(videoUrl)}`
-        });
-
-        const html = await response.text();
-        const $ = cheerio.load(html);
-
-        const caption = $('#tk-search-h2').text().trim();
-
-        const data = [];
-        $('div.tk-down-link a').each((index, element) => {
-            const url = $(element).attr('href');
-            const type = $(element).text().trim();
-            if (url && url !== "javascript:void(0);") {
-                data.push({ type, url });
-            }
-        });
-
-        res.json({
-            developer: "@Milan Bhandari",
-            status: true,
-            caption,
-            data
-        });
-
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
 });
 
 app.listen(port, "0.0.0.0", function () {
