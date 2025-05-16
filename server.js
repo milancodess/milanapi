@@ -102,38 +102,75 @@ app.get("/mus", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard", "mus.html"));
 });
 
-app.get("/s", async (req, res) => {
+app.get('/apisp', async (req, res) => {
   const { url } = req.query;
 
-  if (!url) return res.status(400).json({ error: "URL parameter is required" });
-
-  const match = url.match(/spotify\.com\/(track|playlist)\/([a-zA-Z0-9]+)/);
-  if (!match) return res.status(400).json({ error: "Invalid Spotify URL" });
-
-  const type = match[1];
-  const id = match[2];
+  if (!url) {
+    return res.status(400).json({ error: 'URL parameter is required' });
+  }
 
   try {
-    const response = await axios.post(
-      "https://api.spotidownloader.com/tracks",
-      {
-        type,
-        id,
-        offset: 0,
-      },
+    const metadataResponse = await axios.post(
+      "https://spotymate.com/api/get-metadata",
+      { url },
       {
         headers: {
-          accept: "application/json",
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
           "content-type": "application/json",
-          Referer: "https://spotidownloader.com/",
-        },
+          "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+          "sec-ch-ua-mobile": "?1",
+          "sec-ch-ua-platform": "\"Android\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "Referer": "https://spotymate.com/",
+          "Referrer-Policy": "strict-origin-when-cross-origin"
+        }
       }
     );
 
-    res.json(response.data);
-  } catch (err) {
-    console.error(err.response?.data || err.message);
-    res.status(500).json({ error: "Failed to fetch data" });
+    const metadataData = metadataResponse.data;
+
+    const formattedMetadata = {
+      album: metadataData.apiResponse.data[0].album,
+      album_artist: metadataData.apiResponse.data[0].album_artist,
+      artist: metadataData.apiResponse.data[0].artist,
+      cover_url: metadataData.apiResponse.data[0].cover_url,
+      name: metadataData.apiResponse.data[0].name,
+      releaseDate: metadataData.apiResponse.data[0].releaseDate,
+      url: metadataData.apiResponse.data[0].url
+    };
+
+    const downloadResponse = await axios.post(
+      "https://spotymate.com/api/download-track",
+      { url: formattedMetadata.url },
+      {
+        headers: {
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
+          "sec-ch-ua-mobile": "?1",
+          "sec-ch-ua-platform": "\"Android\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "Referer": "https://spotymate.com/",
+          "Referrer-Policy": "strict-origin-when-cross-origin"
+        }
+      }
+    );
+
+    const downloadData = downloadResponse.data;
+
+    res.json({
+      metadata: formattedMetadata,
+      download: downloadData
+    });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'An error occurred while processing the request' });
   }
 });
 		       
