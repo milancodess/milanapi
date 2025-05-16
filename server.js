@@ -178,7 +178,9 @@ app.get('/api/movie', async (req, res) => {
     const $ = cheerio.load(data);
 
     const title = $('#bread li.active span').text().trim().replace('Text from here: ', '');
-    const poster = $('.thumb.mvi-cover').css('background-image').replace(/^url["']?/, '').replace(/["']?$/, '');
+    const poster = $('.thumb.mvi-cover').css('background-image')
+      .replace(/^url\(["']?/, '')
+      .replace(/["']?\)$/, '');
     const rating = $('#movie-mark').text().trim();
 
     const servers = [];
@@ -187,11 +189,16 @@ app.get('/api/movie', async (req, res) => {
       if (src) servers.push(src);
     });
 
-    let description = $('.desc .f-desc').text().trim();
-    description = description.replace(/You can view it for free on Soap2day\.?/i, '').trim();
+    let description = $('div[itemprop="description"] .f-desc').text().trim();
+
+    const sentences = description.split('.');
+    if (sentences.length >= 2) {
+      description = sentences.slice(0, -1).join('.').trim() + '.';
+    }
+   
+    description = description.replace(/(\s*(You can view it for free on|For those interested, it can be viewed on|Watch it for free on|Available on|Free to watch on)\s*Soap2day\.?\s*)/i, '').trim();
 
     res.json({ title, poster, rating, servers, description });
-
   } catch (error) {
     res.status(500).json({ error: 'Failed to scrape data', details: error.message });
   }
