@@ -102,75 +102,132 @@ app.get("/mus", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard", "mus.html"));
 });
 
-app.get('/apisp', async (req, res) => {
+const CLIENTS = [
+  { id: 'f3335b183f444e44a68ab7a6c886dbb1', secret: '51306a1a768746459321ff76f88a0c39' },
+  { id: '9494f343828f45d39e4192f7581a9659', secret: 'd26adca0eb894a27b1c80522e29323c7' },
+  { id: '8fbc0a797ed1406581d028150cdb35cc', secret: 'c2945ec3875349e69fd37f5f109cbd3b' },
+  { id: '65e55cd971bf4c17b2437774342081e4', secret: 'fe71a7ee17c5474eb9f1e3062cc61178' },
+  { id: '86d2fcb26ab14685873830c077fc4be4', secret: '240ff41427bd45caac4b67899126c8d2' },
+  { id: 'cf6bf55848ef46e29ff31ea13a0e9c96', secret: '275e6a80c7254c88bad5e11201cb8e3b' },
+  { id: 'e83326995c994916baa1f5dd00140932', secret: '0f70aa2161eb497ea5dd748a32f70b91' },
+  { id: 'b18b2492fe0b42b0800a8c3dd9610d8b', secret: '6449122bba814945ad1747c9914c5318' },
+  { id: '68e6cec2672649f7ba6a9ffc3afa8376', secret: '43ff7ca2d24440ed97349ddf81cf0345' },
+  { id: '965a198e6d7f47be827cfb55a7eede6c', secret: 'e16c27d2566c4a48821b58c3a3a04e60' },
+];
+
+function msToMinutesAndSeconds(duration_ms) {
+  const minutes = Math.floor(duration_ms / 60000);
+  const seconds = ((duration_ms % 60000) / 1000).toFixed(0);
+  return `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`;
+}
+
+function extractIdAndType(url) {
+  const regex = /(track|playlist)\/([a-zA-Z0-9]+)/;
+  const match = url.match(regex);
+  if (match) {
+    return {
+      type: match[1],
+      id: match[2]
+    };
+  }
+  throw new Error('Invalid Spotify URL');
+}
+
+async function getAccessTokenWithFallback(index = 0) {
+  if (index >= CLIENTS.length) throw new Error('All client credentials are rate-limited or failed');
+
+  const { id, secret } = CLIENTS[index];
+
+  try {
+    const tokenResponse = await axios({
+      method: 'post',
+      url: 'https://accounts.spotify.com/api/token',
+      params: {
+        grant_type: 'client_credentials'
+      },
+      headers: {
+        'Authorization': 'Basic ' + Buffer.from(id + ':' + secret).toString('base64'),
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+
+    return tokenResponse.data.access_token;
+  } catch (err) {
+    if (err.response && err.response.status === 429) {
+      console.warn(`Rate limited on client index ${index}, trying next...`);
+      return await getAccessTokenWithFallback(index + 1);
+    } else {
+      console.error(`Error with client index ${index}:`, err.message);
+      return await getAccessTokenWithFallback(index + 1);
+    }
+  }
+}
+
+async function getTrackDetails(trackId, accessToken) {
+  const url = `https://api.spotify.com/v1/tracks/${trackId}`;
+  const response = await axios.get(url, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  });
+  const track = response.data;
+  return {
+    name: track.name,
+    artist: track.artists.map(artist => artist.name).join(', '),
+    release_date: track.album.release_date,
+    duration: msToMinutesAndSeconds(track.duration_ms),
+    link: track.external_urls.spotify,
+    image_url: track.album.images.length > 0 ? track.album.images[0].url : null
+  };
+}
+
+async function getPlaylistDetails(playlistId, accessToken) {
+  const url = `https://api.spotify.com/v1/playlists/${playlistId}`;
+  const response = await axios.get(url, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  });
+  const playlist = response.data;
+  return {
+    name: playlist.name,
+    description: playlist.description,
+    owner: playlist.owner.display_name,
+    tracks: playlist.tracks.items.map(item => ({
+      name: item.track.name,
+      artist: item.track.artists.map(artist => artist.name).join(', '),
+      duration: msToMinutesAndSeconds(item.track.duration_ms),
+      link: item.track.external_urls.spotify
+    })),
+    image_url: playlist.images.length > 0 ? playlist.images[0].url : null
+  };
+}
+
+app.get('/getDetails', async (req, res) => {
   const { url } = req.query;
 
   if (!url) {
-    return res.status(400).json({ error: 'URL parameter is required' });
+    return res.status(400).send('URL query parameter is required');
   }
 
   try {
-    const metadataResponse = await axios.post(
-      "https://spotymate.com/api/get-metadata",
-      { url },
-      {
-        headers: {
-          "accept": "*/*",
-          "accept-language": "en-US,en;q=0.9",
-          "content-type": "application/json",
-          "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
-          "sec-ch-ua-mobile": "?1",
-          "sec-ch-ua-platform": "\"Android\"",
-          "sec-fetch-dest": "empty",
-          "sec-fetch-mode": "cors",
-          "sec-fetch-site": "same-origin",
-          "Referer": "https://spotymate.com/",
-          "Referrer-Policy": "strict-origin-when-cross-origin"
-        }
-      }
-    );
+    const { type, id } = extractIdAndType(url);
 
-    const metadataData = metadataResponse.data;
+    const accessToken = await getAccessTokenWithFallback();
 
-    const formattedMetadata = {
-      album: metadataData.apiResponse.data[0].album,
-      album_artist: metadataData.apiResponse.data[0].album_artist,
-      artist: metadataData.apiResponse.data[0].artist,
-      cover_url: metadataData.apiResponse.data[0].cover_url,
-      name: metadataData.apiResponse.data[0].name,
-      releaseDate: metadataData.apiResponse.data[0].releaseDate,
-      url: metadataData.apiResponse.data[0].url
-    };
+    let details;
+    if (type === 'track') {
+      details = await getTrackDetails(id, accessToken);
+    } else if (type === 'playlist') {
+      details = await getPlaylistDetails(id, accessToken);
+    } else {
+      return res.status(400).send('Invalid URL type. Only track or playlist URLs are supported.');
+    }
 
-    const downloadResponse = await axios.post(
-      "https://spotymate.com/api/download-track",
-      { url: formattedMetadata.url },
-      {
-        headers: {
-          "accept": "*/*",
-          "accept-language": "en-US,en;q=0.9",
-          "content-type": "application/json",
-          "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
-          "sec-ch-ua-mobile": "?1",
-          "sec-ch-ua-platform": "\"Android\"",
-          "sec-fetch-dest": "empty",
-          "sec-fetch-mode": "cors",
-          "sec-fetch-site": "same-origin",
-          "Referer": "https://spotymate.com/",
-          "Referrer-Policy": "strict-origin-when-cross-origin"
-        }
-      }
-    );
-
-    const downloadData = downloadResponse.data;
-
-    res.json({
-      metadata: formattedMetadata,
-      download: downloadData
-    });
+    res.json(details);
   } catch (error) {
     console.error('Error:', error.message);
-    res.status(500).json({ error: 'An error occurred while processing the request' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 		       
