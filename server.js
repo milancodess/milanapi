@@ -533,6 +533,6 @@ app.get('/chapter', async (req, res) => {
     }
 });
 
-app.listen(port, "0.0.0.0", function () {
-    console.log(`Listening on port ${port}`)
+app.listen(PORT, "0.0.0.0", function () {
+    console.log(`Listening on port ${PORT}`)
 })
