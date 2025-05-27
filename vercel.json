@@ -4,7 +4,6 @@
     { "src": "server.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/middleware.js", "middlewarePath": "middleware.js" },
     { "src": "/(.*)", "dest": "server.js" }
   ]
 }
