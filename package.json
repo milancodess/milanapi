@@ -1,48 +1,20 @@
 {
-  "name": "milanbhandari",
+  "name": "milanapi",
   "version": "1.0.0",
   "description": "A Node.js Express API",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "author": "MILAN",
   "license": "MIT",
   "dependencies": {
-    "@google/generative-ai": "^0.17.0",
     "axios": "^1.8.2",
     "body-parser": "^1.20.2",
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
     "express": "^4.21.2",
-    "express-fileupload": "^1.4.0",
-    "express-rate-limit": "^7.3.0",
-    "express-useragent": "^1.0.15",
-    "form-data": "^4.0.0",
-    "fs-extra": "^11.1.1",
-    "javascript-obfuscator": "^4.0.2",
-    "jimp": "^0.22.12",
-    "jsdom": "^24.0.0",
-    "jsqr": "^1.4.0",
-    "multer": "^1.4.5-lts.1",
-    "nepal_political": "^1.2.9",
-    "node-fetch": "^2.6.1",
-    "openai": "^4.48.1",
-    "pastebin-api": "^5.1.6",
-    "pet-pet-gif": "^1.0.9",
-    "prodia.js": "^2.1.5",
-    "random": "^4.1.0",
-    "replicate": "^0.32.0",
-    "request": "^2.88.2",
-    "searchlyrics": "^1.0.2",
-    "simsimi-api": "^1.0.3",
-    "string-similarity": "^4.0.4",
-    "superagent": "^10.0.0",
-    "yt-search": "^2.11.1",
-    "ytdl-core": "^4.11.5",
-    "url": "^0.11.4",
-    "uuid": "^10.0.0"
+    "express-rate-limit": "^7.3.0"
   },
   "engines": {
     "node": "20.x"
