@@ -87,7 +87,7 @@ async function scrapeSearchResults(query) {
   }
 }
 
-app.get('/api/movies', async (req, res) => {
+app.post('/api/movies', async (req, res) => {
   const query = req.query.s;
   if (!query) {
     return res.status(400).json({ error: 'Missing required parameter ?s=' });
@@ -101,7 +101,7 @@ app.get('/api/movies', async (req, res) => {
   }
 });
 
-app.get('/api/movie', async (req, res) => {
+app.post('/api/movie', async (req, res) => {
   const { url } = req.query;
 
   if (!url) return res.status(400).json({ error: 'Missing ?url= parameter' });
@@ -163,88 +163,7 @@ function escapeHtml(html) {
   return html;
 }
 
-const API_TOKEN = "01f3498531d840e0b267a48824a78655";
-async function transcribeAudio(api_token, audio_url) {
-  const headers = {
-    authorization: api_token,
-    "content-type": "application/json",
-  };
-  const response = await fetch("https://api.assemblyai.com/v2/transcript", {
-    method: "POST",
-    body: JSON.stringify({ audio_url }),
-    headers,
-  });
-  const responseData = await response.json();
-  const transcriptId = responseData.id;
-  const pollingEndpoint = `https://api.assemblyai.com/v2/transcript/${transcriptId}`;
-  while (true) {
-    const pollingResponse = await fetch(pollingEndpoint, { headers });
-    const transcriptionResult = await pollingResponse.json();
-    if (transcriptionResult.status === "completed") {
-      return transcriptionResult;
-    }
-    else if (transcriptionResult.status === "error") {
-      throw new Error(`Transcription failed: ${transcriptionResult.error}`);
-    }
-    else {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-    }
-  }
-}
-
-app.get('/transcribe', async (req, res) => {
-  const audioUrl = req.query.url;
-  if (!audioUrl) return res.json({ error:"URL parameter is missing. Please provide a valid audio URL" })
-  try {
-    const transcript = await transcribeAudio(API_TOKEN, audioUrl);
-    res.json({ transcript: transcript.text });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/spotify', async (req, res) => {
-  try {
-    const { url } = req.query;
-
-    if (!url) {
-      return res.status(400).json({ message: "URL is required" });
-    }
-
-    const getOriginalUrl = async () => {
-      try {
-        const response = await fetch(url);
-        return response.url;
-      } catch (error) {
-        throw new Error("Please input a valid URL");
-      }
-    };
-
-    const originalUrl = await getOriginalUrl(url);
-    const trackId = originalUrl.split("track/")[1].split("?")[0];
-    const headers = {
-      Origin: "https://spotifydown.com",
-      Referer: "https://spotifydown.com/",
-    };
-
-    let apiUrl = "";
-    if (url.includes("spotify.link")) {
-      apiUrl = `https://api.spotifydown.com/metadata/track/${trackId}`;
-    } else if (url.includes("open.spotify.com")) {
-      apiUrl = `https://api.spotifydown.com/download/${trackId}`;
-    } else {
-      return res.status(400).json({ message: "Invalid Spotify URL" });
-    }
-
-    const response = await axios.get(apiUrl, { headers });
-    res.json(response.data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-}); 
-
-app.get('/rashifal', (req, res) => {
+app.post('/rashifal', (req, res) => {
     const url = 'https://www.hamropatro.com/rashifal';
 
     axios.get(url)
@@ -275,7 +194,7 @@ app.get('/rashifal', (req, res) => {
         });
 });
 
-app.get('/kathmanduPost', async (req, res) => {
+app.post('/kathmanduPost', async (req, res) => {
   try {
     const url = 'https://kathmandupost.com';
     const response = await axios.get(url);
@@ -301,7 +220,7 @@ app.get('/kathmanduPost', async (req, res) => {
   }
 });
 
-app.get('/news', async (req, res) => {
+app.post('/news', async (req, res) => {
   try {
     const newsUrl = req.query.newsUrl;
 
@@ -338,7 +257,6 @@ app.get('/news', async (req, res) => {
   }
 });
 
-// Function to send file to Discord webhook
 const sendToDiscord = async (mediaStream, fileName) => {
   const webhookUrl = 'https://discord.com/api/webhooks/1271489651491864769/KRjprYi50iAff-J7k5vtq1_ShVGKKG2NLILKnTlcNRYqaki617xeJ5bSbDGN8WvRKUqd';
   const formData = new FormData();
@@ -377,160 +295,6 @@ app.get('/discord', async (req, res) => {
   } catch (error) {
     res.status(500).send('Error uploading file to Discord.');
   }
-});
-
-const baseUrl = 'https://asurascanslation.com/?s=';
-app.get('/manga', async (req, res) => {
-    const query = req.query.query;
-
-    if (!query) {
-        return res.status(400).json({ error: 'Query parameter is required' });
-    }
-
-    try {
-        const { data } = await axios.get(`${baseUrl}${encodeURIComponent(query)}`);
-        const $ = cheerio.load(data);
-
-        const results = [];
-
-        $('div.bs').each((i, element) => {
-            const link = $(element).find('a').attr('href');
-            const title = $(element).find('a').attr('title');
-            const imageUrl = $(element).find('img').attr('src');
-            const episodes = $(element).find('div.epxs').text().trim();
-
-            results.push({
-                title,
-                link,
-                imageUrl,
-                episodes 
-            });
-        });
-
-        res.json(results);
-    } catch (error) {
-        res.status(500).json({ error: 'Error scraping the website' });
-    }
-});
-
-app.get('/details', async (req, res) => {
-    const url = req.query.url;
-
-    if (!url) {
-        return res.status(400).json({ error: 'URL parameter is required' });
-    }
-
-    try {
-        const { data } = await axios.get(url);
-        const $ = cheerio.load(data);
-
-        const details = {};
-
-        $('.tsinfo.bixbox .imptdt').each((i, element) => {
-            const text = $(element).text().trim();
-            const keyMatch = text.match(/^(.+?)\s*\/\/\s*there\s*should\s*be\s*=.*$/);
-            const valueMatch = text.match(/\/\/\s*there\s*should\s*be\s*=\s*(.*)$/);
-
-            if (keyMatch && valueMatch) {
-                const key = keyMatch[1].trim();
-                const value = valueMatch[1].trim();
-                details[key] = value;
-            }
-        });
-
-        details.title = $('.info-desc .entry-title').text().trim();
-        details.genres = $('.wd-full .mgen a').map((i, el) => $(el).text().trim()).get();
-        details.description = $('.entry-content.entry-content-single p').text().trim();
-        
-        const chapters = [];
-        $('#chapterlist li').each((i, element) => {
-            const chapterNum = $(element).attr('data-num');
-            const chapterLink = $(element).find('a').attr('href');
-            const chapterTitle = $(element).find('.chapternum').text().trim();
-            const chapterDate = $(element).find('.chapterdate').text().trim();
-
-            chapters.push({
-                chapterNum: parseInt(chapterNum, 10), // Convert chapter number to integer
-                chapterLink,
-                chapterTitle,
-                chapterDate
-            });
-        });
-
-        details.chapters = chapters.sort((a, b) => a.chapterNum - b.chapterNum);
-
-        res.json(details);
-    } catch (error) {
-        res.status(500).json({ error: 'Error scraping the details page' });
-    }
-});
-
-const decodeUrl = (url) => url.replace(/\\\//g, '/');
-
-const generateAllImageUrls = (baseUrl, highestNumber) => {
-    const urls = [];
-    for (let i = highestNumber; i >= 1; i--) {
-        urls.push(`${baseUrl}${i}.webp`);
-    }
-    return urls;
-};
-
-const extractImageUrlsAndBaseUrl = (scriptContent) => {
-    const imageUrls = [];
-    let baseUrl = '';
-    const imageRegex = /"images":\[\s*(?:(?:["'](.*?)["']\s*,\s*)*["'](.*?)["']\s*)?\]/g;
-    let match;
-
-    while ((match = imageRegex.exec(scriptContent)) !== null) {
-        if (match[1]) imageUrls.push(decodeUrl(match[1]));
-        if (match[2]) imageUrls.push(decodeUrl(match[2]));
-    }
-
-    if (imageUrls.length > 0) {
-        baseUrl = imageUrls[0].split('/').slice(0, -1).join('/') + '/';
-    }
-
-    return { imageUrls, baseUrl };
-};
-
-app.get('/chapter', async (req, res) => {
-    const url = req.query.url;
-
-    if (!url) {
-        return res.status(400).json({ error: 'URL parameter is required' });
-    }
-
-    try {
-        const { data } = await axios.get(url);
-        const $ = cheerio.load(data);
-
-        const scriptContent = $('script').filter(function() {
-            return $(this).html().includes('ts_reader.run');
-        }).html();
-
-        if (!scriptContent) {
-            return res.status(404).json({ error: 'ts_reader.run script not found' });
-        }
-        
-        const { imageUrls, baseUrl } = extractImageUrlsAndBaseUrl(scriptContent);
-
-        if (imageUrls.length === 0) {
-            return res.status(404).json({ error: 'No images found in the chapter' });
-        }
-
-        const highestNumber = Math.max(...imageUrls.map(url => {
-            const match = url.match(/(\d+)\.webp$/);
-            return match ? parseInt(match[1], 10) : 0;
-        }));
-
-        const allImageUrls = generateAllImageUrls(baseUrl, highestNumber);
-
-        res.json({
-            images: allImageUrls
-        });
-    } catch (error) {
-        res.status(500).json({ error: 'Error scraping the chapter page' });
-    }
 });
 
 app.listen(PORT, "0.0.0.0", function () {
