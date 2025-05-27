@@ -7,12 +7,8 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const bodyParser = require('body-parser');
 
-const createScreenshot = require('./screenshot');
-
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-require('dotenv').config();
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -143,24 +139,6 @@ app.get('/api/movie', async (req, res) => {
   }
 });
 
-app.get("/screenshot", (req, res) => {
-  const { url } = req.query;
-
-  if (!url) {
-    return res.status(400).json({ error: "URL parameter is required" });
-  }
-
-  createScreenshot(url)
-    .then((stream) => {
-      res.setHeader("Content-Type", "image/png");
-      stream.pipe(res);
-    })
-    .catch((error) => {
-      console.error("Error generating screenshot:", error);
-      res.status(500).json({ error: "Failed to generate screenshot" });
-    });
-})
-
 app.get('/html', async (req, res) => {
   try {
     const url = req.query.site;
@@ -179,8 +157,7 @@ app.get('/html', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message || 'Something went wrong.');
-  }
-});
+  }});
 
 function escapeHtml(html) {
   return html;
