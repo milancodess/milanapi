@@ -1,3 +1,4 @@
+// middleware.js
 export function middleware(request) {
   const url = new URL(request.url);
 
