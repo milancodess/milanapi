@@ -27,10 +27,6 @@ app.get("/", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard","home.html"));
 });
 
-app.get("/home", (req, res) => {
-res.sendFile(path.join(__dirname, "dashboard","home.html"));
-});
-
 app.get("/docs", (req, res) => {
 res.sendFile(path.join(__dirname, "dashboard", "docs.html"));
 });
@@ -139,7 +135,7 @@ app.post('/api/movie', async (req, res) => {
   }
 });
 
-app.get('/html', async (req, res) => {
+app.get('/api/html', async (req, res) => {
   try {
     const url = req.query.site;
     if (!url) {
@@ -163,7 +159,7 @@ function escapeHtml(html) {
   return html;
 }
 
-app.post('/rashifal', (req, res) => {
+app.post('/api/rashifal', (req, res) => {
     const url = 'https://www.hamropatro.com/rashifal';
 
     axios.get(url)
@@ -194,7 +190,7 @@ app.post('/rashifal', (req, res) => {
         });
 });
 
-app.post('/kathmanduPost', async (req, res) => {
+app.post('/api/kathmanduPost', async (req, res) => {
   try {
     const url = 'https://kathmandupost.com';
     const response = await axios.get(url);
@@ -220,7 +216,7 @@ app.post('/kathmanduPost', async (req, res) => {
   }
 });
 
-app.post('/news', async (req, res) => {
+app.post('/api/news', async (req, res) => {
   try {
     const newsUrl = req.query.newsUrl;
 
@@ -274,7 +270,7 @@ const sendToDiscord = async (mediaStream, fileName) => {
   }
 };
 
-app.get('/discord', async (req, res) => {
+app.get('/api/discord', async (req, res) => {
   const mediaUrl = req.query.mediaUrl;
   if (!mediaUrl) {
     return res.status(400).send('No mediaUrl provided.');
