@@ -28,7 +28,11 @@ res.sendFile(path.join(__dirname, "dashboard","home.html"));
 });
 
 app.get("/docs", (req, res) => {
-res.sendFile(path.join(__dirname, "dashboard", "docs.html"));
+res.sendFile(path.join(__dirname, "dashboard","docs.html"));
+});
+
+app.get('/docs', (req, res) => {
+  res.redirect(301, 'https://www.docs.bhandarimilan.info.np');
 });
 
 async function scrapeSearchResults(query) {
