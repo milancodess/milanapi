@@ -7,3 +7,5 @@ build/
 .vscode/
 .launch.json
 test.js
+story_full.html
+mentions.json
