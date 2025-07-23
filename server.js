@@ -15,18 +15,16 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(limiter);
+app.use(express.json());
+app.set("json spaces", 2);
 
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 500,
 });
-app.use(limiter);
-app.use(express.json());
-app.set("json spaces", 2);
 
 app.use(express.static(path.join(__dirname, "public")));
-
-app.use("/views", express.static(path.join(__dirname, "views")));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "home.html"));
